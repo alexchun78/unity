@@ -44,10 +44,10 @@ public class UIButton : UI_Popup
 
 
         // extention을 선언하여 사용하면, 아래처럼 코드를 나누지 않을 수 있다. 
-        GetButton((int)Buttons.PointButton).gameObject.AddUIEvent(OnButtonCliecked);
+        GetButton((int)Buttons.PointButton).gameObject.BindEvent(OnButtonCliecked);
 
         GameObject go = GetImage((int)Images.ItemIcon).gameObject;
-        AddUIEvent(go, ((PointerEventData data) => { go.transform.position = data.position; }), Define.UIEvent.Drag);
+        BindEvent(go, ((PointerEventData data) => { go.transform.position = data.position; }), Define.UIEvent.Drag);
     }
 
 

@@ -6,8 +6,13 @@ using UnityEngine.EventSystems;
 
 public static class Extension
 {
-    public static void AddUIEvent(this GameObject obj, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
+    public static T GetOrAddComponent<T>(this GameObject go) where T : UnityEngine.Component
     {
-        UIBase.AddUIEvent(obj, action, type);
+        return Util.GetOrAddComponent<T>(go);
+    }
+
+    public static void BindEvent(this GameObject obj, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
+    {
+        UIBase.BindEvent(obj, action, type);
     }
 }

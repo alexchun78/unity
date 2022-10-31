@@ -17,7 +17,16 @@ public class ResourceManager
             Debug.Log($"Fail to load prefab : {path}");
             return null;
         }
-        return Object.Instantiate(prefab);
+
+        GameObject obj =  Object.Instantiate(prefab, parent);
+        int idx = obj.name.IndexOf("(Clone)");
+        if(idx > 0)
+        {
+            string sub = obj.name.Substring(0, idx);
+            obj.name = sub;
+        }
+
+        return obj;
     }
 
     public void Destory(GameObject obj, float time = 0.0f)

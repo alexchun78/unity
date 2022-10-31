@@ -62,7 +62,7 @@ public abstract class UIBase : MonoBehaviour
         return Get<Image>(idx);
     }
 
-    public static void AddUIEvent(GameObject obj, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
+    public static void BindEvent(GameObject obj, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
     {
         var evt = Util.GetOrAddComponent<UI_EventHandler>(obj);
         
