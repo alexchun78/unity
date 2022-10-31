@@ -29,13 +29,10 @@ public class PlayerController : MonoBehaviour
         Managers.Input.MouseAction -= OnMouseClicked;
         Managers.Input.MouseAction += OnMouseClicked;
 
-        // Test
-       /// for(int i =0; i < 8; ++i)
-       // {
-            UIButton btn = Managers.UIManager.ShowPopup<UIButton>("UI_Button");
-        //}
+        // UI
+        Managers.UIManager.ShowSceneUI<UI_Inven>();
+
             
-      //  Managers.UIManager.ClosePopupUI(btn);
     }
 
     private void UpdateDie()
@@ -74,7 +71,7 @@ public class PlayerController : MonoBehaviour
         // animation
         Animator anim = GetComponent<Animator>();
         // 현재 게임 상태에 대한 정보를 넘겨준다.
-        anim.SetFloat("speed", 0);
+        anim.SetFloat("speed", 0);       
         //_wait_run_ratio = Mathf.Lerp(_wait_run_ratio, 0.0f, _speed * Time.deltaTime);
         // anim.SetFloat("wait_run_ratio", _wait_run_ratio);
         //anim.Play("WAIT_RUN");

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UI_Scene : UIBase
 {
-    public virtual void Init()
+    public override void Init()
     {
         Managers.UIManager.SetCanvas(gameObject, false);
     }

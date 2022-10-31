@@ -5,11 +5,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UIBase : MonoBehaviour
+public abstract class UIBase : MonoBehaviour
 {
-
     // Unity의 모든 오브젝트들은 UnityEngine.Object 로 저장 가능하다. !! 
     protected Dictionary<Type, UnityEngine.Object[]> _objects = new Dictionary<Type, UnityEngine.Object[]>();
+
+    public abstract void Init();
+
     protected void Bind<T>(Type type) where T : UnityEngine.Object
     {
         // enum 값들을 불러와서 string으로 변환, 리플렉션 기능
