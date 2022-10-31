@@ -37,9 +37,10 @@ public class UIButton : UIBase
 
         Get<Text>((int)Texts.ScoreText).text = "Bind Text";
 
+        
+
         GameObject go = GetImage((int)Images.ItemIcon).gameObject;
-        UI_EventHandler evt = go.GetComponent<UI_EventHandler>();
-        evt.OnDragHandler += ((PointerEventData data) => { evt.gameObject.transform.position = data.position; });
+        AddUIEvent(go, ((PointerEventData data) => { go.transform.position = data.position; }), Define.UIEvent.Drag);
     }
 
 

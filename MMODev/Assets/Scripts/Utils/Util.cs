@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class Util
 {
+    public static T GetOrAddComponent<T>(GameObject go) where T : UnityEngine.Component
+    {
+        T comp = go.GetComponent<T>();
+        if (comp == null)
+        {
+            comp = go.AddComponent<T>();
+        }
+        return comp;
+    }
     public static GameObject FindChild(GameObject obj, string name = null, bool isRecursive = false)
     {
         Transform trans = FindChild<Transform>(obj, name, isRecursive);
