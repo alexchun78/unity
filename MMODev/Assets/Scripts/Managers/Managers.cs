@@ -32,6 +32,15 @@ public class Managers : MonoBehaviour
             return Instance._resource;
         }
     }
+
+    UIManager _uimanager = new UIManager();
+    public static UIManager UIManager
+    {
+        get
+        {
+            return Instance._uimanager;
+        }
+    }
     #endregion
 
     void Start()
