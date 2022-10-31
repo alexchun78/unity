@@ -35,20 +35,20 @@ public class UIButton : UIBase
         Bind<GameObject>(typeof(GameObjects));
         Bind<Image>(typeof(Images));
 
-        Get<Text>((int)Texts.ScoreText).text = "Bind Text";
 
-        
+        // extention을 선언하여 사용하면, 아래처럼 코드를 나누지 않을 수 있다. 
+        GetButton((int)Buttons.PointButton).gameObject.AddUIEvent(OnButtonCliecked);
 
         GameObject go = GetImage((int)Images.ItemIcon).gameObject;
         AddUIEvent(go, ((PointerEventData data) => { go.transform.position = data.position; }), Define.UIEvent.Drag);
     }
 
+    int score = 0;
+    public void OnButtonCliecked(PointerEventData data)
+    {
+        Debug.Log("Button Clicked");
+        score++;
 
-    //int score = 0;
-    //public void OnButtonCliecked()
-    //{
-    //    Debug.Log("Button Clicked");
-    //    score++;
-    //    _text.text = $"점수 : {score}";
-    //}
+        Get<Text>((int)Texts.ScoreText).text = $"점수 : {score}";
+    }
 }
