@@ -16,12 +16,17 @@ public class SceneManagerEx
 
     public void LoadScene(Define.Scene type)
     {
-        CurrentScene.Clear();
+        Managers.Clear();
         SceneManager.LoadScene(GetSceneName(type));
     }
 
     string GetSceneName(Define.Scene type)
     {
         return Enum.GetName(typeof(Define.Scene), type);
+    }
+
+    public void Clear()
+    {
+        CurrentScene.Clear();
     }
 }

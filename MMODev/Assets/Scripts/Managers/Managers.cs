@@ -50,6 +50,15 @@ public class Managers : MonoBehaviour
             return Instance._uimanager;
         }
     }
+
+    SoundManager _soundManager = new SoundManager();
+    public static SoundManager Sound
+    {
+        get
+        {
+            return Instance._soundManager;
+        }
+    }
     #endregion
 
     void Start()
@@ -74,7 +83,17 @@ public class Managers : MonoBehaviour
             }
             DontDestroyOnLoad(obj);
             s_Instance = obj.GetComponent<Managers>();
+
+            s_Instance._soundManager.Init();
         }
 
+    }
+
+    public static void Clear()
+    {
+        Input.Clear();
+        SceneEX.Clear();
+        Sound.Clear();
+        UIManager.Clear();        
     }
 }
