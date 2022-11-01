@@ -33,6 +33,15 @@ public class Managers : MonoBehaviour
         }
     }
 
+    SceneManagerEx _sceneManager = new SceneManagerEx();
+    public static SceneManagerEx SceneEX
+    {
+        get
+        {
+            return Instance._sceneManager;
+        }
+    }
+
     UIManager _uimanager = new UIManager();
     public static UIManager UIManager
     {
