@@ -5,6 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class LoginScene : BaseScene
 {
+    protected override void Init()
+    {
+        base.Init();
+
+        SceneType = Define.Scene.Login;
+    }
+
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Q))
@@ -12,13 +19,6 @@ public class LoginScene : BaseScene
             // Build Setting에서 먼저 Scene을 등록해주어야 한다.
             Managers.SceneEX.LoadScene(Define.Scene.Game);
         }
-    }
-
-    protected override void Init()
-    {
-        base.Init();
-
-        SceneType = Define.Scene.Login;
     }
 
     public override void Clear()

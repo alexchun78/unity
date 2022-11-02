@@ -15,6 +15,15 @@ public class Managers : MonoBehaviour
     }
 
     #region properties
+    DataManager _dataManager = new DataManager();
+    public static DataManager Data
+    {
+        get
+        {
+            return Instance._dataManager;
+        }
+    }
+
     InputManager _input = new InputManager();
     public static InputManager Input
     {
@@ -93,9 +102,10 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(obj);
             s_Instance = obj.GetComponent<Managers>();
 
+            s_Instance._dataManager.Init();
+            s_Instance._poolManager.Init();
             s_Instance._soundManager.Init();
         }
-
     }
 
     public static void Clear()
@@ -103,6 +113,8 @@ public class Managers : MonoBehaviour
         Input.Clear();
         SceneEX.Clear();
         Sound.Clear();
-        UIManager.Clear();        
+        UIManager.Clear();
+
+        Pool.Clear();
     }
 }
