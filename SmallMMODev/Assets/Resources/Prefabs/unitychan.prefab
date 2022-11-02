@@ -2716,6 +2716,7 @@ GameObject:
   - component: {fileID: 2903786964939857285}
   - component: {fileID: 2903786964939857286}
   - component: {fileID: 7256379225310562511}
+  - component: {fileID: 667076390374749597}
   m_Layer: 0
   m_Name: unitychan
   m_TagString: Untagged
@@ -2828,6 +2829,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsUsing: 0
+--- !u!195 &667076390374749597
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2903786964939857293}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &2982654485863479808
 GameObject:
   m_ObjectHideFlags: 0

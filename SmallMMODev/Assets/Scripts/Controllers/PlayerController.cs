@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -46,10 +47,20 @@ public class PlayerController : MonoBehaviour
         Vector3 dir = _destPoint - transform.position;
         if (dir.magnitude > 0.0001)
         {
+#if true     // navs Calculate Path
+            float moveDist = Math.Clamp(Time.deltaTime * _speed, 0, dir.magnitude);
+            dir = dir.normalized;
+
+            NavMeshAgent navs = gameObject.GetComponent<NavMeshAgent>();
+        
+            navs.Move(dir * moveDist);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * _speed * 2);
+#else
             float moveDist = Math.Clamp(Time.deltaTime * _speed, 0, dir.magnitude);
             dir = dir.normalized;
             transform.position += (dir * moveDist);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * _speed * 2);
+#endif
         }
         else
         {
