@@ -6,8 +6,7 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    float _speed = 10.0f;
+    PlayerStat _stat;
     //bool _bMoveToDest = false;
     Vector3 _destPoint = new Vector3(0.0f, 0.0f, 0.0f);
    // float _wait_run_ratio = 0.0f;
@@ -17,6 +16,7 @@ public class PlayerController : MonoBehaviour
         Die, 
         Moving,
         Idle,
+        Skill,
     }
 
     PlayerState _state = PlayerState.Idle;
@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour
         Managers.Input.KeyAction -= OnKeyBoard;
         Managers.Input.KeyAction += OnKeyBoard;
 #endif
+        _stat = gameObject.GetComponent<PlayerStat>();
+
         Managers.Input.MouseAction -= OnMouseClicked;
         Managers.Input.MouseAction += OnMouseClicked;
 
@@ -48,13 +50,13 @@ public class PlayerController : MonoBehaviour
         if (dir.magnitude > 0.1)
         {
 #if true     // navs Calculate Path
-            float moveDist = Math.Clamp(Time.deltaTime * _speed, 0, dir.magnitude);
+            float moveDist = Math.Clamp(Time.deltaTime * _stat.MoveSpeed, 0, dir.magnitude);
             dir = dir.normalized;
 
             NavMeshAgent navs = gameObject.GetComponent<NavMeshAgent>();
         
             navs.Move(dir * moveDist);
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * _speed * 2);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * _stat.MoveSpeed * 2);
 
             bool bHit = Physics.Raycast(transform.position + Vector3.up * 0.5f, dir, 1.0f, LayerMask.GetMask("Block"));
             if(bHit == true)
@@ -78,7 +80,7 @@ public class PlayerController : MonoBehaviour
         // animation
         Animator anim = GetComponent<Animator>();
         // 현재 게임 상태에 대한 정보를 넘겨준다.
-        anim.SetFloat("speed", _speed);
+        anim.SetFloat("speed", _stat.MoveSpeed);
 
        // _wait_run_ratio = Mathf.Lerp(_wait_run_ratio, 1.0f, _speed * Time.deltaTime);
        // anim.SetFloat("wait_run_ratio", _wait_run_ratio);
@@ -148,6 +150,7 @@ public class PlayerController : MonoBehaviour
 #endif
     }
 
+    int _mask = (1 << (int)Define.Layer.Ground) | (1 << (int)Define.Layer.Monster);
     void OnMouseClicked(Define.MouseEvent evt)
     {
         if (_state == PlayerState.Die)
@@ -160,7 +163,7 @@ public class PlayerController : MonoBehaviour
 
         Debug.DrawRay(ray.origin, ray.direction * 100.0f, Color.blue, 1.0f);
         RaycastHit hit;
-        bool bRtn = Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Wall"));
+        bool bRtn = Physics.Raycast(ray, out hit, 100.0f, _mask);
         if (bRtn == true)
         {
 
@@ -168,6 +171,15 @@ public class PlayerController : MonoBehaviour
             // _bMoveToDest = true;
             _state = PlayerState.Moving;
             _destPoint = hit.point;
+
+            if(hit.collider.gameObject.layer == (int) Define.Layer.Monster)
+            {
+                Debug.Log("Monster Click");
+            }
+            else
+            {
+                Debug.Log("Ground Click");
+            }
         }
     }
 

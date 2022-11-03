@@ -33,7 +33,7 @@ public class GameScene : BaseScene
         // UI
         Managers.UIManager.ShowSceneUI<UI_Inven>();
 
-        Dictionary<int, Stat> test = Managers.Data.StatDict;
+        Dictionary<int, Data.Stat> test = Managers.Data.StatDict;
 #if Coroutine // Coroutine
         CoroutineTest test = new CoroutineTest();
         foreach(System.Object t in test)
