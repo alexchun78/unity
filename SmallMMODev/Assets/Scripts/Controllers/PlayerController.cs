@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
     {
         // Mouse ÀÌµ¿
         Vector3 dir = _destPoint - transform.position;
-        if (dir.magnitude > 0.0001)
+        if (dir.magnitude > 0.1)
         {
 #if true     // navs Calculate Path
             float moveDist = Math.Clamp(Time.deltaTime * _speed, 0, dir.magnitude);
@@ -55,6 +55,14 @@ public class PlayerController : MonoBehaviour
         
             navs.Move(dir * moveDist);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * _speed * 2);
+
+            bool bHit = Physics.Raycast(transform.position + Vector3.up * 0.5f, dir, 1.0f, LayerMask.GetMask("Block"));
+            if(bHit == true)
+            {
+                _state = PlayerState.Idle;
+                return;
+            }
+
 #else
             float moveDist = Math.Clamp(Time.deltaTime * _speed, 0, dir.magnitude);
             dir = dir.normalized;
