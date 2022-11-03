@@ -33,7 +33,9 @@ public class GameScene : BaseScene
         // UI
         Managers.UIManager.ShowSceneUI<UI_Inven>();
 
-        Dictionary<int, Data.Stat> test = Managers.Data.StatDict;
+        // add cursor controller
+        gameObject.GetOrAddComponent<CursorController>();
+
 #if Coroutine // Coroutine
         CoroutineTest test = new CoroutineTest();
         foreach(System.Object t in test)

@@ -11,7 +11,7 @@ public class TestCollision : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log($"collision : {collision.gameObject.name}");
+        //Debug.Log($"collision : {collision.gameObject.name}");
     }
 
     // [ Trigger Event 발생 조건 ]
@@ -20,7 +20,7 @@ public class TestCollision : MonoBehaviour
     // (3) 둘 중 하나는 Trigger가 켜져 있어야 한다.
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"trigger : {other.gameObject.name}");
+        //Debug.Log($"trigger : {other.gameObject.name}");
     }
 
     // Start is called before the first frame update
