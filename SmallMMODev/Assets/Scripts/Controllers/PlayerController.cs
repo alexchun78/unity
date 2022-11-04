@@ -32,20 +32,22 @@ public class PlayerController : MonoBehaviour
             switch(_state)
             {
                 case PlayerState.Idle:
-                    anim.SetFloat("speed", 0);
-                    anim.SetBool("attack", false);
+                    //anim.SetFloat("speed", 0);
+                    //anim.SetBool("attack", false);
+                    anim.CrossFade("WAIT", 0.1f);
                     break;
                 case PlayerState.Moving:
-                    {
-                        anim.SetFloat("speed", _stat.MoveSpeed);
-                        anim.SetBool("attack", false);
-                    }
+                    anim.CrossFade("RUN", 0.1f);
+                    //anim.SetFloat("speed", _stat.MoveSpeed);
+                    //anim.SetBool("attack", false);
                     break;
                 case PlayerState.Skill:
-                    anim.SetBool("attack", true);
+                    //anim.CrossFade("ATTACK", 0.1f);
+                    anim.CrossFade("ATTACK", 0.1f, -1, 0); // 반복적으로 행동하는 loof 버전
+                    //anim.SetBool("attack", true);
                     break;
                 case PlayerState.Die:
-                    anim.SetBool("attack", false);
+                    //anim.SetBool("attack", false);
                     break;
             }
         }
@@ -79,6 +81,7 @@ public class PlayerController : MonoBehaviour
         {
             _destPoint = _lockTarget.transform.position;
             var dist = (_destPoint - transform.position).magnitude;
+            Debug.Log($"dist: {dist}");
             if (dist <= 1) //1.2
             {
                 State = PlayerState.Skill;
@@ -126,16 +129,12 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateSkill()
     {
-      //  Debug.Log("UpdateSkill()");
-        //if (_bStopSkill)
-        //{
-        //    State = PlayerState.Idle;
-        //}
-        //else
-        //{
-        //    State = PlayerState.Skill;
-        //}
-      //  State = PlayerState.Moving;
+        if(_lockTarget != null)
+        {
+            Vector3 dir = _lockTarget.transform.position - transform.position;
+            Quaternion quat = Quaternion.LookRotation(dir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, quat, Time.deltaTime *20);
+        }
     }
 
     void OnHitEvent()
