@@ -39,11 +39,21 @@ public class Define
         PointerDown,
         PointerUp,
         Click,
-
+        PressRB,
+        PointerDownRB,
+        PointerUpRB,
+        ClickRB,
     }
 
     public enum CameraMode
     {
         QuaterView,
+    }
+    public enum State
+    {
+        Die, 
+        Moving,
+        Idle,
+        Skill,
     }
 }

@@ -23,7 +23,7 @@ public class InputManager
 
         if(MouseAction != null)
         {
-            if(Input.GetMouseButton(0)) // 마우스를 눌렀을 때, 
+            if(Input.GetMouseButton(0)) // 마우스 왼쪽버튼을 눌렀을 때, 
             {
                 if(_pressed == false)
                 {
@@ -32,6 +32,10 @@ public class InputManager
                 }
                 MouseAction.Invoke(Define.MouseEvent.Press);
                 _pressed = true;
+            }
+            else if(Input.GetMouseButton(1)) // 마우스 오른쪽 버튼을 눌렀을 때,
+            {
+                MouseAction.Invoke(Define.MouseEvent.PressRB);
             }
             else
             {

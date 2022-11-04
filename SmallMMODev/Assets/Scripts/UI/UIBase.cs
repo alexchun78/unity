@@ -10,6 +10,11 @@ public abstract class UIBase : MonoBehaviour
     // Unity의 모든 오브젝트들은 UnityEngine.Object 로 저장 가능하다. !! 
     protected Dictionary<Type, UnityEngine.Object[]> _objects = new Dictionary<Type, UnityEngine.Object[]>();
 
+    private void Start()
+    {
+        Init();
+    }
+
     public abstract void Init();
 
     protected void Bind<T>(Type type) where T : UnityEngine.Object
@@ -60,6 +65,11 @@ public abstract class UIBase : MonoBehaviour
     protected Image GetImage(int idx)
     {
         return Get<Image>(idx);
+    }
+
+    protected GameObject GetObject(int idx)
+    {
+        return Get<GameObject>(idx);
     }
 
     public static void BindEvent(GameObject obj, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)

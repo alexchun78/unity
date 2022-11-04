@@ -18,6 +18,8 @@ public class CameraController : MonoBehaviour
     {
         Debug.Log($"{ _delta.x},{ _delta.y},{ _delta.z}");
 
+        Managers.Input.MouseAction -= MouseEvent;
+        Managers.Input.MouseAction += MouseEvent;
     }
 
     // Update is called once per frame
@@ -49,5 +51,12 @@ public class CameraController : MonoBehaviour
     {
         _cameraMode = Define.CameraMode.QuaterView;
         _delta = delta;
+    }
+
+    void MouseEvent(Define.MouseEvent evt)
+    {
+
+
+        Debug.Log("Camera mouse");
     }
 }
