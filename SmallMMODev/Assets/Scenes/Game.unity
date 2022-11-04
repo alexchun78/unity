@@ -1653,7 +1653,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 448782445367632542, guid: 72ac417bf8c528a449074cb9a6c11cfa, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 448782445367632542, guid: 72ac417bf8c528a449074cb9a6c11cfa, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1690,6 +1690,10 @@ PrefabInstance:
     - target: {fileID: 448782445367632542, guid: 72ac417bf8c528a449074cb9a6c11cfa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1865634494145072288, guid: 72ac417bf8c528a449074cb9a6c11cfa, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2903786964939857281, guid: 72ac417bf8c528a449074cb9a6c11cfa, type: 3}
       propertyPath: m_IsKinematic
@@ -7033,10 +7037,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.6301727
-  m_Height: 3.2221081
+  m_Radius: 0.34080195
+  m_Height: 2.8889408
   m_Direction: 1
-  m_Center: {x: 0.029428124, y: 1.1110541, z: 0}
+  m_Center: {x: 0.053498566, y: 1.1944919, z: 0}
 --- !u!1001 &1185665974
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13667,7 +13671,11 @@ PrefabInstance:
     - target: {fileID: 6541461756470005991, guid: 3abc4f8342371b9468427029aa93ca37, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: e519cbed53c9c1f4abc2f2d0aad1a914, type: 2}
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541461756470005991, guid: 3abc4f8342371b9468427029aa93ca37, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6541461756477432449, guid: 3abc4f8342371b9468427029aa93ca37, type: 3}
       propertyPath: m_Name
       value: Knight
