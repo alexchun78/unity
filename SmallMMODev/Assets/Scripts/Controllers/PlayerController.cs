@@ -11,14 +11,12 @@ public class PlayerController : BaseController
     int _mask = (1 << (int)Define.Layer.Ground) | (1 << (int)Define.Layer.Monster);
     bool _bStopSkill = false;
 
-    protected override void Init()
+    public override void Init()
     {
 #if false
         Managers.Input.KeyAction -= OnKeyBoard;
         Managers.Input.KeyAction += OnKeyBoard;
 #endif
-        base.Init();
-
         _stat = gameObject.GetComponent<PlayerStat>();
 
         Managers.Input.MouseAction -= OnMouseEvent;
@@ -27,7 +25,10 @@ public class PlayerController : BaseController
         // UI
         // Managers.UIManager.ShowSceneUI<UI_Inven>();
 
-        Managers.UIManager.MakeWorldSpaceUI<UI_HPBar>(transform);
+        if (gameObject.GetComponentInChildren<UI_HPBar>() == null)
+        {
+            Managers.UIManager.MakeWorldSpaceUI<UI_HPBar>(transform);
+        }
     }
 
     protected override void UpdateMoving()
@@ -39,7 +40,7 @@ public class PlayerController : BaseController
             _destPos = _lockTarget.transform.position;
             var dist = (_destPos - transform.position).magnitude;
             Debug.Log($"dist: {dist}");
-            if (dist <= 1) //1.2
+            if (dist <= 1.7) //1.2
             {
                 State = Define.State.Skill;
                 return;
@@ -50,27 +51,35 @@ public class PlayerController : BaseController
         Vector3 dir = _destPos - transform.position;
         if (dir.magnitude > 0.1)
         {
-#if true     // navs Calculate Path
-            float moveDist = Math.Clamp(Time.deltaTime * _stat.MoveSpeed, 0, dir.magnitude);
-            dir = dir.normalized;
-
-            NavMeshAgent navs = gameObject.GetComponent<NavMeshAgent>();
-        
-            navs.Move(dir * moveDist);
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * _stat.MoveSpeed * 2);
-
-            bool bHit = Physics.Raycast(transform.position + Vector3.up * 0.5f, dir, 1.0f, LayerMask.GetMask("Block"));
+#if false     
+            bool bHit = Physics.Raycast(transform.position + Vector3.up * 0.5f, dir.normalized, 1.0f, LayerMask.GetMask("Block"));
             if(bHit == true)
             {
                 if (!Input.GetMouseButton(0))
                     State = Define.State.Idle;
                 return;
             }
+
+            // navs Calculate Path
+            float moveDist = Math.Clamp(Time.deltaTime * _stat.MoveSpeed, 0, dir.magnitude);
+
+            NavMeshAgent navs = gameObject.GetComponent<NavMeshAgent>();
+            navs.Move(dir.normalized * moveDist);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir.normalized), Time.deltaTime * _stat.MoveSpeed * 2);
+
+
 #else
-            float moveDist = Math.Clamp(Time.deltaTime * _speed, 0, dir.magnitude);
-            dir = dir.normalized;
-            transform.position += (dir * moveDist);
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * _speed * 2);
+            bool bHit = Physics.Raycast(transform.position + Vector3.up * 0.5f, dir.normalized, 1.0f, LayerMask.GetMask("Block"));
+            if(bHit == true)
+            {
+                if (!Input.GetMouseButton(0))
+                    State = Define.State.Idle;
+                return;
+            }
+
+            float moveDist = Math.Clamp(Time.deltaTime * _stat.MoveSpeed, 0, dir.magnitude);
+            transform.position += (dir.normalized * moveDist);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir.normalized), Time.deltaTime * _stat.MoveSpeed * 2);
 #endif
         }
         else
@@ -135,7 +144,6 @@ public class PlayerController : BaseController
             Debug.Log(damage);
 
             targetStat.Hp -= damage;
-
         }
 
         if (_bStopSkill)

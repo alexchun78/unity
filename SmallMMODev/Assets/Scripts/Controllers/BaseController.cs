@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseController : MonoBehaviour
+public abstract class BaseController : MonoBehaviour
 {
     #region SerializeField
     [SerializeField]
@@ -52,7 +52,7 @@ public class BaseController : MonoBehaviour
         Init();   
     }
 
-    protected virtual void Init() { }
+    public abstract void Init();
 
     void Update()
     {
