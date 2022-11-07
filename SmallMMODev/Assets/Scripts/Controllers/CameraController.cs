@@ -27,6 +27,15 @@ public class CameraController : MonoBehaviour
     {
         if(_cameraMode == Define.CameraMode.QuaterView)
         {
+            // 플레이어가 죽었을 때, 
+            if(_player == null)
+            {
+
+
+                return;
+            }
+
+
             // 레이캐스트를 한다.
             RaycastHit hit;
             bool bRtn = Physics.Raycast(_player.transform.position, _delta, out hit, _delta.magnitude, LayerMask.GetMask("Wall"));

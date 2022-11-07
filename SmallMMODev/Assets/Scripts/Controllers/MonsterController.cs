@@ -28,14 +28,15 @@ public class MonsterController : BaseController
     {
         Debug.Log("Monster Update Idle");
 
-        // TODO : 매니저가 생기면 변경 가능
+        //// TODO : 매니저가 생기면 변경 가능
         GameObject player = GameObject.FindGameObjectWithTag("Player");
+        Debug.Log(player.tag);
         if (player == null)
             return;
 
-        float distance = (player.transform.position - gameObject.transform.position).magnitude;
+        float distance = (player.transform.position - transform.position).magnitude;
         Debug.Log($"Distance of Player btw Monster : {distance}");
-        if(distance <= _scanRange)
+        if (distance <= _scanRange)
         {
             _lockTarget = player;
             State = Define.State.Moving;
@@ -102,9 +103,7 @@ public class MonsterController : BaseController
         }
 
         Stat targetStat = _lockTarget.GetComponent<Stat>();
-        Stat myStat = gameObject.GetComponent<Stat>();
-
-        int damage = Mathf.Max(myStat.Attack - targetStat.Defense, 0);
+        int damage = Mathf.Max(_stat.Attack - targetStat.Defense, 0);
 
         targetStat.Hp -= damage;
 
@@ -124,6 +123,7 @@ public class MonsterController : BaseController
         }
         else
         {
+            GameObject.Destroy(_lockTarget);
             State = Define.State.Idle;
         }
     }

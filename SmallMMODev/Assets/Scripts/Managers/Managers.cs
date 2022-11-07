@@ -15,6 +15,15 @@ public class Managers : MonoBehaviour
     }
 
     #region properties
+    GameManagerEx _game = new GameManagerEx(); 
+    public static GameManagerEx Game
+    {
+        get
+        {
+            return Instance._game;
+        }
+    }
+
     DataManager _dataManager = new DataManager();
     public static DataManager Data
     {
@@ -101,6 +110,8 @@ public class Managers : MonoBehaviour
             }
             DontDestroyOnLoad(obj);
             s_Instance = obj.GetComponent<Managers>();
+
+            s_Instance._game.Init();
 
             s_Instance._dataManager.Init();
             s_Instance._poolManager.Init();

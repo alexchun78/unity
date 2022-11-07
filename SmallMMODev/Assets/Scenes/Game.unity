@@ -13746,7 +13746,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4627397963735462514, guid: 3abc4f8342371b9468427029aa93ca37, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.30663
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4627397963735462514, guid: 3abc4f8342371b9468427029aa93ca37, type: 3}
       propertyPath: m_LocalPosition.z
@@ -13784,9 +13784,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Knight
       objectReference: {fileID: 0}
+    - target: {fileID: 4627397963735462519, guid: 3abc4f8342371b9468427029aa93ca37, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 4627397963735462524, guid: 3abc4f8342371b9468427029aa93ca37, type: 3}
       propertyPath: m_Center.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4627397963735462525, guid: 3abc4f8342371b9468427029aa93ca37, type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
+    - target: {fileID: 4627397963735462525, guid: 3abc4f8342371b9468427029aa93ca37, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3abc4f8342371b9468427029aa93ca37, type: 3}
