@@ -17,6 +17,7 @@ public class PlayerController : BaseController
         Managers.Input.KeyAction -= OnKeyBoard;
         Managers.Input.KeyAction += OnKeyBoard;
 #endif
+        WorldObjectType = Define.WorldObject.Player;
         _stat = gameObject.GetComponent<PlayerStat>();
 
         Managers.Input.MouseAction -= OnMouseEvent;

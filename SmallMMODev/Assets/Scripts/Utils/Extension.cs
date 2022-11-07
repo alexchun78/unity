@@ -15,4 +15,10 @@ public static class Extension
     {
         UIBase.BindEvent(obj, action, type);
     }
+
+    public static bool IsValid(this GameObject obj)
+    {
+        return obj != null && obj.activeSelf;
+    }
+
 }

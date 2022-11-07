@@ -15,7 +15,9 @@ public class MonsterController : BaseController
     float _attackRange = 2.0f;
 
     public override void Init()
-    {   
+    {
+        WorldObjectType = Define.WorldObject.Monster;
+
         _stat = gameObject.GetComponent<Stat>();
 
         if(gameObject.GetComponentInChildren<UI_HPBar>() == null)
@@ -30,7 +32,6 @@ public class MonsterController : BaseController
 
         //// TODO : 매니저가 생기면 변경 가능
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        Debug.Log(player.tag);
         if (player == null)
             return;
 
@@ -123,7 +124,7 @@ public class MonsterController : BaseController
         }
         else
         {
-            GameObject.Destroy(_lockTarget);
+            Managers.Game.DeSpawn(_lockTarget);
             State = Define.State.Idle;
         }
     }

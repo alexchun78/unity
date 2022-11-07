@@ -111,8 +111,6 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(obj);
             s_Instance = obj.GetComponent<Managers>();
 
-            s_Instance._game.Init();
-
             s_Instance._dataManager.Init();
             s_Instance._poolManager.Init();
             s_Instance._soundManager.Init();

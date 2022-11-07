@@ -36,6 +36,12 @@ public class GameScene : BaseScene
         // add cursor controller
         gameObject.GetOrAddComponent<CursorController>();
 
+        // game manager 
+        GameObject player = Managers.Game.Spawn(Define.WorldObject.Player, "unityChan");
+        Camera.main.gameObject.GetComponent<CameraController>().SetPlayer(player);
+
+        GameObject monster =  Managers.Game.Spawn(Define.WorldObject.Monster, "Knight");
+
 #if Coroutine // Coroutine
         CoroutineTest test = new CoroutineTest();
         foreach(System.Object t in test)

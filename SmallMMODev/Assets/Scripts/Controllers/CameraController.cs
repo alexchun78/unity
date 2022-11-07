@@ -13,6 +13,11 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     GameObject _player = null;
 
+    public void SetPlayer(GameObject player)
+    {
+        _player = player;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,10 +33,9 @@ public class CameraController : MonoBehaviour
         if(_cameraMode == Define.CameraMode.QuaterView)
         {
             // 플레이어가 죽었을 때, 
-            if(_player == null)
+            // activeSelf 는 비활성화 되었는 지 확인
+            if(_player.IsValid() == false)
             {
-
-
                 return;
             }
 
