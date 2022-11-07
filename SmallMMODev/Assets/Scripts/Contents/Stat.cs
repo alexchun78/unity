@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,5 +33,36 @@ public class Stat : MonoBehaviour
         _attack = 10;
         _defense = 5;
         _moveSpeed= 5.0f;
+    }
+
+    public virtual void OnAttacked(Stat attacker)
+    {
+        int damage = Mathf.Max(attacker.Attack - Defense, 0);
+        Hp -= damage;
+
+        if (Hp <=  0)
+        {
+            Hp = 0;
+            OnDead(attacker);
+        }            
+    }
+
+    protected virtual void OnDead(Stat attacker)
+    {
+        PlayerStat playerStat = attacker as PlayerStat;
+        if (playerStat != null)
+        {
+            playerStat.Exp += 100;
+        }
+
+
+        //Define.WorldObject type = Managers.Game.GetWorldObjectType(attacker.gameObject);
+        //if(type == Define.WorldObject.Player)
+        //{
+        //    PlayerStat playerStat = attacker as PlayerStat;
+        //    if(playerStat != null)
+                 
+        //}
+        Managers.Game.DeSpawn(gameObject);
     }
 }

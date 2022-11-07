@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,13 @@ public class GameManagerEx
     //Dictionary<int, GameObject> _monsters = new Dictionary<int, GameObject>();
     HashSet<GameObject> _monsters = new HashSet<GameObject>();
 
+    public Action<int> OnSpawnEvent;
+
+    public GameObject GetPlayer()
+    {
+        return _player;
+    }
+
     public GameObject Spawn(Define.WorldObject type, string path, Transform parent = null)
     {
         GameObject obj = Managers.Resource.Instantiate(path, parent);
@@ -21,6 +29,8 @@ public class GameManagerEx
         {
             case Define.WorldObject.Monster:
                 _monsters.Add(obj);
+                if (OnSpawnEvent != null)
+                    OnSpawnEvent.Invoke(1);
                 break;
             case Define.WorldObject.Player:
                 _player = obj;
@@ -29,7 +39,7 @@ public class GameManagerEx
         return obj;
     }
 
-    public Define.WorldObject GEtWorldObjectType(GameObject obj)
+    public Define.WorldObject GetWorldObjectType(GameObject obj)
     {
         BaseController bc = obj.GetComponent<BaseController>();
         if (bc == null)
@@ -40,13 +50,15 @@ public class GameManagerEx
 
     public void DeSpawn(GameObject obj)
     {
-        Define.WorldObject type = GEtWorldObjectType(obj); 
+        Define.WorldObject type = GetWorldObjectType(obj); 
         switch(type)
         {
             case Define.WorldObject.Monster:
                 if(_monsters.Contains(obj))
                 {
                     _monsters.Remove(obj);
+                    if (OnSpawnEvent != null)
+                        OnSpawnEvent.Invoke(-1);
                 }
                 break;
             case Define.WorldObject.Player:

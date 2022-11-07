@@ -50,6 +50,7 @@ public class PlayerController : BaseController
 
         // Mouse ÀÌµ¿
         Vector3 dir = _destPos - transform.position;
+        dir.y = 0;
         if (dir.magnitude > 0.1)
         {
 #if false     
@@ -70,9 +71,10 @@ public class PlayerController : BaseController
 
 
 #else
-            bool bHit = Physics.Raycast(transform.position + Vector3.up * 0.5f, dir.normalized, 1.0f, LayerMask.GetMask("Block"));
+            bool bHit = Physics.Raycast(transform.position + Vector3.up * 0.5f, dir.normalized, 1.0f, (1 << (int)Define.Layer.Block));
             if(bHit == true)
             {
+                Debug.Log("Block");
                 if (!Input.GetMouseButton(0))
                     State = Define.State.Idle;
                 return;
@@ -139,12 +141,13 @@ public class PlayerController : BaseController
         if (_lockTarget != null)
         {
             Stat targetStat = _lockTarget.GetComponent<Stat>();
-            PlayerStat myStat = gameObject.GetComponent<PlayerStat>();
+           // PlayerStat myStat = gameObject.GetComponent<PlayerStat>();
 
-            int damage = Mathf.Max(myStat.Attack - targetStat.Defense, 0);
-            Debug.Log(damage);
+            targetStat.OnAttacked(_stat); 
+            //int damage = Mathf.Max(myStat.Attack - targetStat.Defense, 0);
+            //Debug.Log(damage);
 
-            targetStat.Hp -= damage;
+            //targetStat.Hp -= damage;
         }
 
         if (_bStopSkill)

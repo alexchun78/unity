@@ -28,15 +28,15 @@ public class MonsterController : BaseController
 
     protected override void UpdateIdle()
     {
-        Debug.Log("Monster Update Idle");
+        // Debug.Log("Monster Update Idle");
 
-        //// TODO : 매니저가 생기면 변경 가능
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        GameObject player = Managers.Game.GetPlayer();
+        //GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
             return;
 
         float distance = (player.transform.position - transform.position).magnitude;
-        Debug.Log($"Distance of Player btw Monster : {distance}");
+        //Debug.Log($"Distance of Player btw Monster : {distance}");
         if (distance <= _scanRange)
         {
             _lockTarget = player;
@@ -47,7 +47,7 @@ public class MonsterController : BaseController
 
     protected override void UpdateSkill() 
     {
-        Debug.Log("Monster Update Skill");
+       // Debug.Log("Monster Update Skill");
 
         if (_lockTarget != null)
         {
@@ -58,7 +58,7 @@ public class MonsterController : BaseController
     }
     protected override void UpdateMoving()
     {
-        Debug.Log("Monster Update Moving");
+       // Debug.Log("Monster Update Moving");
 
         // 플레이어를 찾았을 경우에만 작동되게
         // 플레이어가 사정거리 내이면 공격상태로 변경
@@ -66,7 +66,7 @@ public class MonsterController : BaseController
         {
             _destPos = _lockTarget.transform.position;
             var dist = (_destPos - transform.position).magnitude;
-            Debug.Log($"dist: {dist}");
+            //Debug.Log($"dist: {dist}");
             if (dist <= _attackRange) //1.2
             {
                 State = Define.State.Skill;
@@ -78,6 +78,7 @@ public class MonsterController : BaseController
 
         // Mouse 이동
         Vector3 dir = _destPos - transform.position;
+        dir.y = 0;
         if (dir.magnitude > 0.1)
         {
             float moveDist = Math.Clamp(Time.deltaTime * _stat.MoveSpeed, 0, dir.magnitude);
@@ -96,7 +97,6 @@ public class MonsterController : BaseController
 
     void OnHitEvent()
     {
-
         if (_lockTarget == null)
         {
             State = Define.State.Idle;
@@ -104,12 +104,12 @@ public class MonsterController : BaseController
         }
 
         Stat targetStat = _lockTarget.GetComponent<Stat>();
-        int damage = Mathf.Max(_stat.Attack - targetStat.Defense, 0);
-
-        targetStat.Hp -= damage;
+        targetStat.OnAttacked(_stat);
+        // int damage = Mathf.Max(_stat.Attack - targetStat.Defense, 0);
+        //targetStat.Hp -= damage;
 
         // 상대가 죽었는 지 확인
-        Debug.Log(targetStat.Hp);
+       // Debug.Log(targetStat.Hp);v 
         if (targetStat.Hp > 0)
         {
             float dist = (_lockTarget.transform.position - gameObject.transform.position).magnitude;

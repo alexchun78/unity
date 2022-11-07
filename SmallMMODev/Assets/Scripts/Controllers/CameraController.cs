@@ -42,7 +42,7 @@ public class CameraController : MonoBehaviour
 
             // 레이캐스트를 한다.
             RaycastHit hit;
-            bool bRtn = Physics.Raycast(_player.transform.position, _delta, out hit, _delta.magnitude, LayerMask.GetMask("Wall"));
+            bool bRtn = Physics.Raycast(_player.transform.position, _delta, out hit, _delta.magnitude, 1 << (int)Define.Layer.Block);
             if(bRtn == true)
             {
                 Debug.Log("Wall existed");
@@ -68,8 +68,6 @@ public class CameraController : MonoBehaviour
 
     void MouseEvent(Define.MouseEvent evt)
     {
-
-
-        Debug.Log("Camera mouse");
+        //Debug.Log("Camera mouse");
     }
 }

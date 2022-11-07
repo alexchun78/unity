@@ -31,7 +31,7 @@ public class GameScene : BaseScene
         SceneType = Define.Scene.Game;
 
         // UI
-        Managers.UIManager.ShowSceneUI<UI_Inven>();
+      //  Managers.UIManager.ShowSceneUI<UI_Inven>();
 
         // add cursor controller
         gameObject.GetOrAddComponent<CursorController>();
@@ -40,7 +40,10 @@ public class GameScene : BaseScene
         GameObject player = Managers.Game.Spawn(Define.WorldObject.Player, "unityChan");
         Camera.main.gameObject.GetComponent<CameraController>().SetPlayer(player);
 
-        GameObject monster =  Managers.Game.Spawn(Define.WorldObject.Monster, "Knight");
+        //GameObject monster =  Managers.Game.Spawn(Define.WorldObject.Monster, "Knight");
+        GameObject go = new GameObject { name = "SpawningPool"};
+        SpawningPool spawningPool = go.GetOrAddComponent<SpawningPool>();
+        spawningPool.SetKeepMonsterCount(5);
 
 #if Coroutine // Coroutine
         CoroutineTest test = new CoroutineTest();
