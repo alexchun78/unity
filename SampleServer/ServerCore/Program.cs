@@ -6,31 +6,36 @@ namespace ServerCore
 {
     class Program
     {
-        volatile static bool _stop = false;
-
-        static void ThreadMain()
-        {
-            Console.WriteLine("Thread Start");
-            while(_stop == false)
-            {
-                // wait for stop signal
-            }
-            Console.WriteLine("Thread End");
-        }
 
         static void Main(string[] args)
         {
-            Task task = new Task(ThreadMain);
-            task.Start();
+            int[,] arr = new int[10000, 10000];
 
-            Thread.Sleep(1000);
+            {
+                var now = DateTime.Now.Ticks;
+                for(int c = 0; c < 10000; ++ c)
+                {
+                    for(int r = 0; r < 10000; ++r)
+                    {
+                        arr[c, r] = 1;
+                    }
+                }
+                var end = DateTime.Now.Ticks;
+                Console.WriteLine($"arr[c, r] 순서 걸린 시간 : {end - now}");
+            }
+            {
+                var now = DateTime.Now.Ticks;
+                for (int c = 0; c < 10000; ++c)
+                {
+                    for (int r = 0; r < 10000; ++r)
+                    {
+                        arr[r, c] = 1;
+                    }
+                }
+                var end = DateTime.Now.Ticks;
+                Console.WriteLine($"arr[r, c] 순서 걸린 시간 : {end - now}");
+            }
 
-            _stop = true;
-
-            Console.WriteLine("Stop 호출");
-            Console.WriteLine("종료 대기중");
-            task.Wait();
-            Console.WriteLine("종료 성공");
         }
     }
 }
