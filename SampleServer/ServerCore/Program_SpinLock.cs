@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServerCore
 {
-#if true // C#에서 제공하는 SpinLock 사용
+#if false // C#에서 제공하는 SpinLock 사용
 
     // 1. 근성
     // 2. 양보
@@ -18,7 +18,34 @@ namespace ServerCore
     {
         static object _obj = new object();
         // 기본적으로 계속 기다리다가, 너무 답이 없으면, 2.양보 모드로 변환되어 다른 쓰레드에 넘겨준다. 
-        static SpinLock _lock = new SpinLock(); 
+        static SpinLock _lock = new SpinLock();
+
+        //RWLock ReaderWriterLock
+        static ReaderWriterLockSlim _lock3 = new ReaderWriterLockSlim();
+
+        // [] [] [] [] []
+        class Reward
+        {
+        }
+
+        // 99.9999999999%
+        static Reward GetRewardByID(int id)
+        {
+            _lock3.EnterReadLock();
+            // TODO
+            // 대부분의 경우는 여기서 처리
+            _lock3.ExitReadLock();
+            return null;
+        }
+
+        // 0.00000000001%
+        static void AddReward(Reward reward)
+        {
+            _lock3.EnterWriteLock();
+            // TODO
+            // 매우 희소하게 처리할 경우, VIP를 위해서만...
+            _lock3.ExitWriteLock();
+        }
 
         static void Main(string[] args)
         {
