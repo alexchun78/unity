@@ -45,6 +45,7 @@ namespace ServerCore
         {
             ThreadPool.SetMinThreads(1, 1);
             ThreadPool.SetMinThreads(2,2);
+            // 이렇게 하면, 내부적으로 Task를 개수 만큼 만들어서 제공한다.
             Parallel.Invoke(WhoAmI, WhoAmI, WhoAmI, WhoAmI, WhoAmI, WhoAmI, WhoAmI);
 
             // TLS 해제하기
