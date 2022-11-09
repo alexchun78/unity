@@ -10,7 +10,7 @@ namespace ServerCore
     // 1) Full Memory Barrior  (ASM MFENCE) : Store / Load 둘다 막는다.  -> Thread.MemoryBarrier();
     // 2) Store Memory Barrior (ASM SFENCE) : Store만 막는다.
     // 2) Load Memory Barrior (ASM LFENCE) : Load만 막는다.
-    class Program
+    public partial class Program
     {
         static int x = 0;
         static int y = 0;
@@ -37,6 +37,7 @@ namespace ServerCore
             r2 = y; // Load y
         }
 
+#if false
         int _answer;
         bool _complete;
         void A()
@@ -56,25 +57,26 @@ namespace ServerCore
                 Console.WriteLine(_answer);
             }
         }
-        static void Main(string[] args)
-        {
-            int count = 0;
-            while (true)
-            {
-                count++;
-                x = y = r1 = r2 = 0;
+#endif
+        //static void Main(string[] args)
+        //{
+        //    int count = 0;
+        //    while (true)
+        //    {
+        //        count++;
+        //        x = y = r1 = r2 = 0;
 
-                Task t1 = new Task(Thread_1);
-                Task t2 = new Task(Thread_2);
-                t1.Start();
-                t2.Start();
+        //        Task t1 = new Task(Thread_1);
+        //        Task t2 = new Task(Thread_2);
+        //        t1.Start();
+        //        t2.Start();
 
-                Task.WaitAll(t1, t2);
+        //        Task.WaitAll(t1, t2);
 
-                if (r1 == 0 && r2 == 0)
-                    break;
-            }
-            Console.WriteLine($"{count}번만에 탈출!");
-        }
+        //        if (r1 == 0 && r2 == 0)
+        //            break;
+        //    }
+        //    Console.WriteLine($"{count}번만에 탈출!");
+        //}
     }
 }
