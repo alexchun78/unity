@@ -23,10 +23,13 @@ namespace ServerCore
             // 영업 시작
             _listenSocket.Listen(10); // backlog : 최대 대기수 -> 문지기가 안내할 때까지 몇 명이 대기하게 할 것인지..
 
-            //blocking 코드를 없애기 위해 -> 비동기로 만들기 위해
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.Completed += new EventHandler<SocketAsyncEventArgs>(OnAcceptCompleted);
-            RegisterAccept(args); // 최초로 낚싯대를 휙 던진 거 (비유를 굳이 한다면)
+            //for(int i =0; i < 10; ++i) // 낚싯대를 여러개 만들 때 
+            //{
+                //blocking 코드를 없애기 위해 -> 비동기로 만들기 위해
+                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+                args.Completed += new EventHandler<SocketAsyncEventArgs>(OnAcceptCompleted);
+                RegisterAccept(args); // 최초로 낚싯대를 휙 던진 거 (비유를 굳이 한다면)
+            //}
         }
 
         void RegisterAccept(SocketAsyncEventArgs args)
@@ -42,6 +45,9 @@ namespace ServerCore
 
         void OnAcceptCompleted(object sender, SocketAsyncEventArgs args)
         {
+            // [NOTE] 여기는 Async로 멀티 쓰레드로 코드가 작동된다. (ThreadPool)
+            // 동시 다발적으로 같은 데이터를 건들 가능성이 있다. Race condition 발생 가능함.
+            // 나중에 Lock을 걸어주는 게 필요함.
             if(args.SocketError == SocketError.Success)
             {
                 // TODO 

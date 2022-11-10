@@ -29,8 +29,11 @@ namespace DummyClient
                     Console.WriteLine($"Connected to {socket.RemoteEndPoint.ToString()}");
 
                     // 메시지 보낸다.
-                    byte[] sendBuffer = Encoding.UTF8.GetBytes("Hello World!");
-                    int sendBytes = socket.Send(sendBuffer);
+                    for(int i = 0;i<5;++i)
+                    {
+                        byte[] sendBuffer = Encoding.UTF8.GetBytes($"Hello World!{i}");
+                        int sendBytes = socket.Send(sendBuffer);
+                    }
 
                     // 메시지 받는다.
                     byte[] recvBuffer = new byte[1024];
