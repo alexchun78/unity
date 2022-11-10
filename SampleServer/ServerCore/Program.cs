@@ -1,82 +1,59 @@
 ﻿using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ServerCore
 {
-    // 메모리 배리어
-    // (A) 코드 재배치 방지
-    // (B) 가시성
-    // 1) Full Memory Barrior  (ASM MFENCE) : Store / Load 둘다 막는다.  -> Thread.MemoryBarrier();
-    // 2) Store Memory Barrior (ASM SFENCE) : Store만 막는다.
-    // 2) Load Memory Barrior (ASM LFENCE) : Load만 막는다.
     public partial class Program
     {
-        static int x = 0;
-        static int y = 0;
-        static int r1 = 0;
-        static int r2 = 0;
 
-        static void Thread_1()
+        static Listener _listener = new Listener();
+
+        static void OnAcceptHandler(Socket clientSocket)
         {
-            y = 1; // Store y
-
-            //-------------------------------
-            Thread.MemoryBarrier();
-
-            r1 = x; // Load x
-        }
-
-        static void Thread_2()
-        {
-            x = 1; // Store x
-
-            //-------------------------------
-            Thread.MemoryBarrier();
-
-            r2 = y; // Load y
-        }
-
-#if false
-        int _answer;
-        bool _complete;
-        void A()
-        {
-            _answer = 123;
-            Thread.MemoryBarrier(); // 기록 후
-            _complete = true;
-            Thread.MemoryBarrier();// 기록 후
-        }
-
-        void B()
-        {
-            Thread.MemoryBarrier();// 읽기 전
-            if (_complete)
+            try
             {
-                Thread.MemoryBarrier(); // 읽기 전
-                Console.WriteLine(_answer);
+                // 메시지 받는다.
+                byte[] recvBuffer = new byte[1024];
+                int recievedBytes = clientSocket.Receive(recvBuffer);
+                // // 문자열 변환
+                string receiveData = Encoding.UTF8.GetString(recvBuffer, 0, recievedBytes);
+                Console.WriteLine($"[From Client] {receiveData}");
+
+                // 메시지 보낸다.
+                byte[] sendBuffer = Encoding.UTF8.GetBytes("Welcome to MMORPG Server!");
+                int sendBytes = clientSocket.Send(sendBuffer);
+
+                // 쫓아낸다.
+                clientSocket.Shutdown(SocketShutdown.Both); // 서버 끊기 전에 미리 양쪽에 공지한다. 
+                clientSocket.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
             }
         }
-#endif
-        //static void Main(string[] args)
-        //{
-        //    int count = 0;
-        //    while (true)
-        //    {
-        //        count++;
-        //        x = y = r1 = r2 = 0;
 
-        //        Task t1 = new Task(Thread_1);
-        //        Task t2 = new Task(Thread_2);
-        //        t1.Start();
-        //        t2.Start();
+        static void Main(string[] args)
+        {
+            // DNS(Domain Name System)
+            string host = Dns.GetHostName();
 
-        //        Task.WaitAll(t1, t2);
+            IPHostEntry ipHost = Dns.GetHostEntry(host);
+            IPAddress ipAddr = ipHost.AddressList[0]; // 식당 주소
+            IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777); // 식당 문            
 
-        //        if (r1 == 0 && r2 == 0)
-        //            break;
-        //    }
-        //    Console.WriteLine($"{count}번만에 탈출!");
-        //}
+            // 문지기
+            _listener.Init(endPoint, OnAcceptHandler);
+            Console.WriteLine("Listening....");
+            
+            while (true)
+            {
+
+            }
+        }
     }
 }

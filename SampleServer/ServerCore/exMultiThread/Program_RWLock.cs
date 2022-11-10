@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -10,7 +11,7 @@ namespace ServerCore
     {
         static volatile int countRW = 0;
         static RWLock _lockRW = new RWLock();
-        /*
+        
         static void Main(string[] args)
         {
             Task t1 = new Task(delegate ()
@@ -39,6 +40,7 @@ namespace ServerCore
 
             Console.WriteLine(countRW);
         }
-        */
+        
     }
 }
+*/

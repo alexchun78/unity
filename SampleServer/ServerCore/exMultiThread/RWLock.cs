@@ -1,11 +1,11 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
 namespace ServerCore
 {
-
     // 스핀락 정책 => 5000번 이후에는 yield로 자동 변경
 
     class RWLock
@@ -170,3 +170,4 @@ namespace ServerCore
 #endif
     }
 }
+*/
