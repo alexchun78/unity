@@ -10,20 +10,22 @@ namespace ServerCore
     {
         Socket _socket;
         int _disconnected = 0;
-        SocketAsyncEventArgs _sendArgc = new SocketAsyncEventArgs();
+
         Queue<byte[]> _sendQueue = new Queue<byte[]>();
-        bool _isPending = false;
         object _lock = new object();
+
+        SocketAsyncEventArgs _sendArgc = new SocketAsyncEventArgs();
+        SocketAsyncEventArgs _recvArgc = new SocketAsyncEventArgs();
+        List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
         public void Start(Socket socket)
         {
             _socket = socket;
 
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
+            _recvArgc.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
             // args.UserToken = 1; / / 추가 정보를 넘기고 싶을 때, 
-            args.SetBuffer(new byte[1024], 0, 1024);
-            RegisterRecv(args); // 최초로 낚싯대를 휙 던진 거 (비유를 굳이 한다면)
+            _recvArgc.SetBuffer(new byte[1024], 0, 1024);
+            RegisterRecv(); // 최초로 낚싯대를 휙 던진 거 (비유를 굳이 한다면)
 
             _sendArgc.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
         }
@@ -35,15 +37,16 @@ namespace ServerCore
                 // 멀티쓰레드 환경에서 간섭이 있을 수 있으므로, send Complete 되는 시점에만 해당 메시지를 보낼 수 있게
                 // 일단, queue를 만들어 저장한다.
                 _sendQueue.Enqueue(sendBuff);
-                if (_isPending == false)
+                if (_pendingList.Count == 0)
                     RegisterSend();
             }
-
+#if false
             // // _socket.Send(sendBuff);
             //SocketAsyncEventArgs sendArgc = new SocketAsyncEventArgs();
             //sendArgc.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
             //_sendArgc.SetBuffer(sendBuff, 0, sendBuff.Length);
             //RegisterSend();
+#endif
         }
 
         public void DisConnect()
@@ -55,15 +58,26 @@ namespace ServerCore
             _socket.Close();
         }
 
-        #region 네트워크 통신
+#region 네트워크 통신
         void RegisterSend()
         {
+#if true // 한번에 리스트 단위로 넣는 작업
+            //_pendingList.Clear();
+
+            while(_sendQueue.Count > 0)
+            {
+                byte[] tempElement = _sendQueue.Dequeue();
+                _pendingList.Add(new ArraySegment<byte>(tempElement, 0, tempElement.Length));
+                //[NOTE] 이렇게 바로 넣는 것은 안된다!! -> 잠재적 버그 : _sendArgc.BufferList.Add(new ArraySegment<byte>(tempElement, 0, tempElement.Length));
+            }
+            _sendArgc.BufferList = _pendingList;
+#else // 1개씩 꺼내서 리스트에 넣는 작업
             _isPending = true;
             byte[] buffer_temp = _sendQueue.Dequeue();
             _sendArgc.SetBuffer(buffer_temp, 0, buffer_temp.Length);
-            
+#endif
             bool isPending = _socket.SendAsync(_sendArgc);
-            if(isPending == false)
+            if (isPending == false)
             {
                 OnSendCompleted(null, _sendArgc);
             }
@@ -77,11 +91,14 @@ namespace ServerCore
                 {
                     try
                     {
+                        _sendArgc.BufferList = null;
+                        _pendingList.Clear();
+
+                        Console.WriteLine($"Transferred bytes : {_sendArgc.BytesTransferred}");
+
                         // 예약을 하는 동안에 누군가 또 메시지를 보냈으면, 
                         if (_sendQueue.Count > 0)
                             RegisterSend();
-                        else
-                            _isPending = false;
                     }
                     catch (Exception e)
                     {
@@ -95,12 +112,12 @@ namespace ServerCore
             }
         }
 
-        void RegisterRecv(SocketAsyncEventArgs args)
+        void RegisterRecv()
         {           
-            bool isPending = _socket.ReceiveAsync(args);
+            bool isPending = _socket.ReceiveAsync(_recvArgc);
             if(isPending == false)
             {
-                OnRecvCompleted(null, args);
+                OnRecvCompleted(null, _recvArgc);
             }
         }
 
@@ -112,7 +129,7 @@ namespace ServerCore
                 {
                     string receiveData = Encoding.UTF8.GetString(args.Buffer, args.Offset, args.BytesTransferred);
                     Console.WriteLine($"[From Client] {receiveData}");
-                    RegisterRecv(args);
+                    RegisterRecv();
                 }
                 catch(Exception e)
                 {
@@ -124,7 +141,7 @@ namespace ServerCore
                 DisConnect();
             }
         }
-        #endregion
+#endregion
     }
 }
  
