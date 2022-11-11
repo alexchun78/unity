@@ -16,7 +16,6 @@ namespace ServerCore
         {
             try
             { 
-
                 Session session = new Session();
                 session.Start(clientSocket);
             
