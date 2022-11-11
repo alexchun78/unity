@@ -32,6 +32,8 @@ namespace ServerCore
         {
             lock(_lock)
             {
+                // 멀티쓰레드 환경에서 간섭이 있을 수 있으므로, send Complete 되는 시점에만 해당 메시지를 보낼 수 있게
+                // 일단, queue를 만들어 저장한다.
                 _sendQueue.Enqueue(sendBuff);
                 if (_isPending == false)
                     RegisterSend();
@@ -56,7 +58,10 @@ namespace ServerCore
         #region 네트워크 통신
         void RegisterSend()
         {
-             
+            _isPending = true;
+            byte[] buffer_temp = _sendQueue.Dequeue();
+            _sendArgc.SetBuffer(buffer_temp, 0, buffer_temp.Length);
+            
             bool isPending = _socket.SendAsync(_sendArgc);
             if(isPending == false)
             {
@@ -66,27 +71,27 @@ namespace ServerCore
 
         void OnSendCompleted(object obj, SocketAsyncEventArgs args)
         {
-            if(args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
+            lock (_lock)
             {
-                try
+                if (args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
                 {
                     try
                     {
-
+                        // 예약을 하는 동안에 누군가 또 메시지를 보냈으면, 
+                        if (_sendQueue.Count > 0)
+                            RegisterSend();
+                        else
+                            _isPending = false;
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine($"OnSendCompleted is failed. {e.ToString()}");
+                        Console.WriteLine($"OnSendOnComplefe is failed. {e.ToString()}");
                     }
                 }
-                catch (Exception e)
+                else
                 {
-                    Console.WriteLine($"OnSendOnComplefe is failed. {e.ToString()}");
+                    DisConnect();
                 }
-            }
-            else
-            {
-                DisConnect();
             }
         }
 
