@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
 namespace ServerCore
 {
-    class Session
+    public abstract class Session
     {
         Socket _socket;
         int _disconnected = 0;
@@ -17,6 +18,13 @@ namespace ServerCore
         SocketAsyncEventArgs _sendArgc = new SocketAsyncEventArgs();
         SocketAsyncEventArgs _recvArgc = new SocketAsyncEventArgs();
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
+
+        public abstract void OnConnected(EndPoint endPoint);
+        public abstract void OnRecv(ArraySegment<byte> buffer);
+
+        public abstract void OnSend(int numOfBytes);
+
+        public abstract void OnDisconnected(EndPoint endPoint);
 
         public void Start(Socket socket)
         {
@@ -54,6 +62,7 @@ namespace ServerCore
             if (Interlocked.Exchange(ref _disconnected, 1) == 1)
                 return;
 
+            OnDisconnected(_socket.RemoteEndPoint);
             _socket.Shutdown(SocketShutdown.Both); // 서버 끊기 전에 미리 양쪽에 공지한다. 
             _socket.Close();
         }
@@ -94,7 +103,7 @@ namespace ServerCore
                         _sendArgc.BufferList = null;
                         _pendingList.Clear();
 
-                        Console.WriteLine($"Transferred bytes : {_sendArgc.BytesTransferred}");
+                        OnSend(_sendArgc.BytesTransferred);
 
                         // 예약을 하는 동안에 누군가 또 메시지를 보냈으면, 
                         if (_sendQueue.Count > 0)
@@ -127,8 +136,7 @@ namespace ServerCore
             {
                 try
                 {
-                    string receiveData = Encoding.UTF8.GetString(args.Buffer, args.Offset, args.BytesTransferred);
-                    Console.WriteLine($"[From Client] {receiveData}");
+                    OnRecv(new ArraySegment<byte>(args.Buffer, args.Offset, args.BytesTransferred));
                     RegisterRecv();
                 }
                 catch(Exception e)
