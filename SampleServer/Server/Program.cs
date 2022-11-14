@@ -8,13 +8,37 @@ using ServerCore;
 
 namespace Server
 {
+    class Knight
+    {
+        public int hp;
+        public int attack;
+    }
+
     class GameSession : Session
     {
         public override void OnConnected(EndPoint endPoint)
         {
             Console.WriteLine($"OnConnected : {endPoint}");
 
-            byte[] sendBuffer = Encoding.UTF8.GetBytes("Welcome to MMORPG Server!");
+            Knight knight = new Knight() { hp = 100, attack = 10 };
+
+            // [100] [10]
+            //byte[] sendBuffer = new byte[4096];
+            //byte[] buffer_hp = BitConverter.GetBytes(knight.hp);
+            //byte[] buffer_attack = BitConverter.GetBytes(knight.attack);
+            //Array.Copy(buffer_hp, 0, sendBuffer, 0, buffer_hp.Length);
+            //Array.Copy(buffer_attack, 0, sendBuffer, buffer_hp.Length, buffer_attack.Length);
+
+            ArraySegment<byte> openSegment = SendBufferHelper.Open(4096);
+            byte[] buffer_hp = BitConverter.GetBytes(knight.hp);
+            byte[] buffer_attack = BitConverter.GetBytes(knight.attack);
+            Array.Copy(buffer_hp, 0, openSegment.Array, openSegment.Offset, buffer_hp.Length);
+            Array.Copy(buffer_attack, 0, openSegment.Array, openSegment.Offset + buffer_hp.Length, buffer_attack.Length);
+            ArraySegment<byte> sendBuffer = SendBufferHelper.Close(buffer_hp.Length + buffer_attack.Length);
+
+
+
+            //byte[] sendBuffer = Encoding.UTF8.GetBytes("Welcome to MMORPG Server!");
             Send(sendBuffer);
 
             Thread.Sleep(1000);
@@ -26,10 +50,11 @@ namespace Server
             Console.WriteLine($"OnDisconnected : {endPoint}");
         }
 
-        public override void OnRecv(ArraySegment<byte> buffer)
+        public override int OnRecv(ArraySegment<byte> buffer)
         {
             string receiveData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
             Console.WriteLine($"[From Client] {receiveData}");
+            return buffer.Count;
         }
 
         public override void OnSend(int numOfBytes)
