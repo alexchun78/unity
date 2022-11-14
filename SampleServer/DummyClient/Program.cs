@@ -7,16 +7,32 @@ using System.Threading;
 
 namespace DummyClient
 {
+    class Packet
+    {
+        // packet 사이즈와 ID는 기본으로 같이 보내준다.
+        // packet 사이즈를 최대한 압축해서 보내는 게 좋다.
+        public ushort size;
+        public ushort packetID;
+    }
+
     class GameSession : Session
     {
         public override void OnConnected(EndPoint endPoint)
         {
             Console.WriteLine($"OnConnected : {endPoint}");
 
+            Packet packet = new Packet() { size = 4, packetID = 7 };
+
             //  메시지 보낸다.
             for (int i = 0; i < 5; ++i)
             {
-                byte[] sendBuffer = Encoding.UTF8.GetBytes($"Hello World!{i}");
+                ArraySegment<byte> openSegment = SendBufferHelper.Open(4096);
+                byte[] buffer_hp = BitConverter.GetBytes(packet.size);
+                byte[] buffer_attack = BitConverter.GetBytes(packet.packetID);
+                Array.Copy(buffer_hp, 0, openSegment.Array, openSegment.Offset, buffer_hp.Length);
+                Array.Copy(buffer_attack, 0, openSegment.Array, openSegment.Offset + buffer_hp.Length, buffer_attack.Length);
+                ArraySegment<byte> sendBuffer = SendBufferHelper.Close(packet.size);
+
                 Send(sendBuffer);
             }
         }
