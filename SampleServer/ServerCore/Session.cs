@@ -7,6 +7,7 @@ using System.Threading;
 
 namespace ServerCore
 {
+
     public abstract class PacketSession : Session
     {
         public static readonly int HeaderSize = 2;
@@ -36,7 +37,7 @@ namespace ServerCore
                 processLen += dataSize;
             }
             
-            return 0;
+            return processLen;
         }
 
         public abstract void OnRecvPacket(ArraySegment<byte> buffer);
