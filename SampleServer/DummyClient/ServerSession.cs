@@ -92,12 +92,33 @@ namespace DummyClient
 
             PlayerInfoReq packet = new PlayerInfoReq() { playerID = 1001 };
 
-            //  메시지 보낸다.
             {
                 ArraySegment<byte> sendBuffer = packet.Write();
                 if (sendBuffer != null)
                     Send(sendBuffer);
             }
+            //  메시지 보낸다.
+            //for (int i = 0; i < 5; ++i)
+            {
+                //ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+
+                //// [s][][][][][][][][][c]
+                //// 멀티쓰레딩 환경에서 한번이라도 실패하면, isSuccess가 false가 되도록 &= 으로 한다. 
+                //// GetBytes보다 더 속도면에서 좋지만, 개발자가 핸들링할 게 있다. 
+                //ushort count = 0;
+                //bool isSuccess = true;
+
+                //count += 2;
+                //isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset+ count, segment.Count- count), packet.packetID);
+                //count += 2;
+                //isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), packet.playerID);
+                //count += 8;
+                //isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset, segment.Count), count); // packet.size
+
+                //ArraySegment<byte> sendBuffer = SendBufferHelper.Close(count);//(packet.size);
+
+                //if(isSuccess)
+                //    Send(sendBuffer);
 #if false
                 byte[] size = BitConverter.GetBytes(packet.size); // 2 byte
                 byte[] packetID = BitConverter.GetBytes(packet.packetID); // 2 byte
