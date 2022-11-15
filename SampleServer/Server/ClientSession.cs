@@ -21,12 +21,6 @@ namespace Server
         public long playerId;
     }
 
-    class PlayerInfoOk : Packet
-    {
-        public int hp;
-        public int attack;
-    }
-
     public enum PacketID
     {
         PlayerInfoReq = 1,
