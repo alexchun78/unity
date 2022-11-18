@@ -97,6 +97,7 @@ namespace DummyClient
                 if (sendBuffer != null)
                     Send(sendBuffer);
             }
+#if false
             //  메시지 보낸다.
             //for (int i = 0; i < 5; ++i)
             {
@@ -119,7 +120,7 @@ namespace DummyClient
 
                 //if(isSuccess)
                 //    Send(sendBuffer);
-#if false
+
                 byte[] size = BitConverter.GetBytes(packet.size); // 2 byte
                 byte[] packetID = BitConverter.GetBytes(packet.packetID); // 2 byte
                 byte[] playerID = BitConverter.GetBytes(packet.playerID); // 8 byte                
@@ -129,8 +130,9 @@ namespace DummyClient
                 count += 2;
                 Array.Copy(playerID, 0, segment.Array, segment.Offset + count, 8);//  size.Length, packetID.Length);
                 count += 8;
+
+        }
 #endif
-            }
         }
 
         public override void OnDisconnected(EndPoint endPoint)
