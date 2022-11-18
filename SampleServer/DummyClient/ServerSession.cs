@@ -22,22 +22,26 @@ namespace DummyClient
     class PlayerInfoReq : Packet
     {
         public long playerID;
-        //public string name;
+        public string name;
 
         public PlayerInfoReq()
         {
             packetID = (ushort)PacketID.PlayerInfoReq;
         }
          
-        public override void Read(ArraySegment<byte> s)
+        public override void Read(ArraySegment<byte> segment)
         {
             ushort count = 0;
-           // ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+
+            ReadOnlySpan<byte> span = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
+            // ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
             count += 2;
            // ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
             count += 2;
             //long playerId = BitConverter.ToInt64(s.Array, s.Offset + count); // 계속 충분한 공간이 있는 지 확인해야 한다.\
-            this.playerID = BitConverter.ToInt64(new ReadOnlySpan<byte>(s.Array, s.Offset + count, s.Count - count));
+            //this.playerID = BitConverter.ToInt64(new ReadOnlySpan<byte>(s.Array, s.Offset + count, s.Count - count));
+            this.playerID = BitConverter.ToInt64(span.Slice(count, span.Length - count));
             count += 8;
             Console.WriteLine($"PlayerInfoReq : {this.playerID}");
         }
@@ -51,13 +55,34 @@ namespace DummyClient
             // GetBytes보다 더 속도면에서 좋지만, 개발자가 핸들링할 게 있다. 
             ushort count = 0;
             bool isSuccess = true;
+#if true
+            Span<byte> span = new Span<byte>(segment.Array, segment.Offset, segment.Count);
 
+            // packetID를 byte로 변환하여 저장
             count += sizeof(ushort);
+            isSuccess &= BitConverter.TryWriteBytes(span.Slice(count, span.Length - count), this.packetID);
+            // playerID를 byte로 변환하여 저장
+            count += sizeof(ushort);
+            isSuccess &= BitConverter.TryWriteBytes(segment.Slice(count, span.Length - count), this.playerID);
+            // 전체 size를 byte로 변환하여 저장
+            count += sizeof(long);
+            isSuccess &= BitConverter.TryWriteBytes(span,count);
+
+
+            // C++의 경우가 아님.
+            // string 실체와 string 내의 정보를  나누어서 생각해야 한다.
+            // string length [2]
+            // byte []
+
+
+#else
+            
             isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.packetID);
             count += sizeof(ushort);
             isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.playerID);
             count += sizeof(long);
             isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset, segment.Count), count); // packet.size
+#endif
 
             if (isSuccess == false)
                 return null;
