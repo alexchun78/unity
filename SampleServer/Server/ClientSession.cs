@@ -23,6 +23,7 @@ namespace Server
     class PlayerInfoReq : Packet
     {
         public long playerID;
+        public string name;
 
         public PlayerInfoReq()
         {
@@ -36,13 +37,19 @@ namespace Server
             ReadOnlySpan<byte> span = new Span<byte>(segment.Array, segment.Offset, segment.Count);
 
             // ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
-            count += 2;
+            count += sizeof(ushort);
             // ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
-            count += 2;
+            count += sizeof(ushort);
             //long playerId = BitConverter.ToInt64(s.Array, s.Offset + count); // 계속 충분한 공간이 있는 지 확인해야 한다.\
             //this.playerID = BitConverter.ToInt64(new ReadOnlySpan<byte>(s.Array, s.Offset + count, s.Count - count));
             this.playerID = BitConverter.ToInt64(span.Slice(count, span.Length - count));
-            count += 8;
+            count += sizeof(long);
+
+            // string 변환
+            ushort nameLen = BitConverter.ToUInt16(segment.Array, count);
+            count += sizeof(ushort);
+            this.name = Encoding.Unicode.GetString(span.Slice(count, nameLen));
+
             Console.WriteLine($"PlayerInfoReq : {this.playerID}");
         }
 
@@ -123,11 +130,11 @@ namespace Server
         {
             ushort count = 0;
             ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
-            count += 2;
+            count += sizeof(ushort);
             ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
-            count += 2; 
+            count += sizeof(ushort);
 
-            switch((PacketID)id)
+            switch ((PacketID)id)
             {
                 case PacketID.PlayerInfoReq:
                     {
@@ -136,7 +143,7 @@ namespace Server
 
                         //long playerId = BitConverter.ToInt32(buffer.Array, buffer.Offset + count);
                         //count += 8;
-                        Console.WriteLine($"PlayerInfoReq : {playerInfoReq.playerID}");
+                        Console.WriteLine($"PlayerInfoReq : {playerInfoReq.playerID},PlayerName : {playerInfoReq.name}");
                     }
                     break;
                 case PacketID.PlayerInfoOk:
