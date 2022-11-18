@@ -22,12 +22,13 @@ namespace DummyClient
     class PlayerInfoReq : Packet
     {
         public long playerID;
+        //public string name;
 
         public PlayerInfoReq()
         {
             packetID = (ushort)PacketID.PlayerInfoReq;
         }
-
+         
         public override void Read(ArraySegment<byte> s)
         {
             ushort count = 0;
@@ -35,9 +36,10 @@ namespace DummyClient
             count += 2;
            // ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
             count += 2;
-            long playerId = BitConverter.ToInt32(s.Array, s.Offset + count);
+            //long playerId = BitConverter.ToInt64(s.Array, s.Offset + count); // 계속 충분한 공간이 있는 지 확인해야 한다.\
+            this.playerID = BitConverter.ToInt64(new ReadOnlySpan<byte>(s.Array, s.Offset + count, s.Count - count));
             count += 8;
-            Console.WriteLine($"PlayerInfoReq : {playerId}");
+            Console.WriteLine($"PlayerInfoReq : {this.playerID}");
         }
 
         public override ArraySegment<byte> Write()
@@ -50,11 +52,11 @@ namespace DummyClient
             ushort count = 0;
             bool isSuccess = true;
 
-            count += 2;
+            count += sizeof(ushort);
             isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.packetID);
-            count += 2;
+            count += sizeof(ushort);
             isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.playerID);
-            count += 8;
+            count += sizeof(long);
             isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset, segment.Count), count); // packet.size
 
             if (isSuccess == false)

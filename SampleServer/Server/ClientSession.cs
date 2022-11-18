@@ -8,17 +8,62 @@ using ServerCore;
 
 namespace Server
 {
-    class Packet
+    public abstract class Packet
     {
         // packet 사이즈와 ID는 기본으로 같이 보내준다.
         // packet 사이즈를 최대한 압축해서 보내는 게 좋다.
         public ushort size;
         public ushort packetID;
+
+        public abstract ArraySegment<byte> Write();
+        public abstract void Read(ArraySegment<byte> s);
+
     }
 
     class PlayerInfoReq : Packet
     {
-        public long playerId;
+        public long playerID;
+
+        public PlayerInfoReq()
+        {
+            packetID = (ushort)PacketID.PlayerInfoReq;
+        }
+
+        public override void Read(ArraySegment<byte> s)
+        {
+            ushort count = 0;
+            // ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+            count += 2;
+            // ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
+            count += 2;
+            //long playerId = BitConverter.ToInt64(s.Array, s.Offset + count); // 계속 충분한 공간이 있는 지 확인해야 한다.\
+            this.playerID = BitConverter.ToInt64(new ReadOnlySpan<byte>(s.Array, s.Offset + count, s.Count - count));
+            count += 8;
+            Console.WriteLine($"PlayerInfoReq : {this.playerID}");
+        }
+
+        public override ArraySegment<byte> Write()
+        {
+            ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+
+            // [s][][][][][][][][][c]
+            // 멀티쓰레딩 환경에서 한번이라도 실패하면, isSuccess가 false가 되도록 &= 으로 한다. 
+            // GetBytes보다 더 속도면에서 좋지만, 개발자가 핸들링할 게 있다. 
+            ushort count = 0;
+            bool isSuccess = true;
+
+            count += 2;
+            isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.packetID);
+            count += 2;
+            isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.playerID);
+            count += 8;
+            isSuccess &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset, segment.Count), count); // packet.size
+
+            if (isSuccess == false)
+                return null;
+
+            return SendBufferHelper.Close(count);
+        }
     }
 
     public enum PacketID
@@ -33,8 +78,8 @@ namespace Server
         {
             Console.WriteLine($"OnConnected : {endPoint}");
 
-            Packet packet = new Packet() { size = 100, packetID = 10 };
-
+          //  PlayerInfoReq packet = new PlayerInfoReq() { packetID = 10 };
+#if false
             // [100] [10]
             //byte[] sendBuffer = new byte[4096];
             //byte[] buffer_hp = BitConverter.GetBytes(packet.hp);
@@ -51,11 +96,12 @@ namespace Server
 
             ////byte[] sendBuffer = Encoding.UTF8.GetBytes("Welcome to MMORPG Server!");
             //Send(sendBuffer);
-
+#endif
             Thread.Sleep(5000);
             DisConnect();
         }
 
+        // [][][][][][][][][][][][]
         public override void OnRecvPacket(ArraySegment<byte> buffer)
         {
             ushort count = 0;
@@ -68,9 +114,12 @@ namespace Server
             {
                 case PacketID.PlayerInfoReq:
                     {
-                        long playerId = BitConverter.ToInt32(buffer.Array, buffer.Offset + count);
-                        count += 8;
-                        Console.WriteLine($"PlayerInfoReq : {playerId}");
+                        PlayerInfoReq playerInfoReq = new PlayerInfoReq();
+                        playerInfoReq.Read(buffer);
+
+                        //long playerId = BitConverter.ToInt32(buffer.Array, buffer.Offset + count);
+                        //count += 8;
+                        Console.WriteLine($"PlayerInfoReq : {playerInfoReq.playerID}");
                     }
                     break;
                 case PacketID.PlayerInfoOk:
