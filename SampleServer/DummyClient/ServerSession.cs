@@ -7,20 +7,8 @@ using System.Text;
 using System.Threading;
 
 namespace DummyClient
-{
-    public abstract class Packet
-    {
-        // packet 사이즈와 ID는 기본으로 같이 보내준다.
-        // packet 사이즈를 최대한 압축해서 보내는 게 좋다.
-        public ushort size;
-        public ushort packetID;
-
-        public abstract ArraySegment<byte> Write();
-        public abstract void Read(ArraySegment<byte> s);
-
-    }
-
-    class PlayerInfoReq : Packet
+{ 
+    class PlayerInfoReq
     {
         public long playerID;
         public string name;
@@ -59,12 +47,9 @@ namespace DummyClient
 
         public List<SkillInfo> skills = new List<SkillInfo>();
 
-        public PlayerInfoReq()
-        {
-            packetID = (ushort)PacketID.PlayerInfoReq;
-        }
-         
-        public override void Read(ArraySegment<byte> segment)
+
+        
+        public void Read(ArraySegment<byte> segment)
         {
             ushort count = 0;
 
@@ -99,7 +84,7 @@ namespace DummyClient
             Console.WriteLine($"PlayerInfoReq : {this.playerID}");
         }
 
-        public override ArraySegment<byte> Write()
+        public ArraySegment<byte> Write()
         {
             ArraySegment<byte> segment = SendBufferHelper.Open(4096);
 
@@ -114,7 +99,7 @@ namespace DummyClient
             // packetID를 byte로 변환하여 저장
             //isSuccess &= BitConverter.TryWriteBytes(span.Slice(count, span.Length - count), this.size);
             count += sizeof(ushort); // ->  이게 원래 packet의 전체 사이즈를 적는 부분인데... 생략되어 있다. size를 알 수 없어서 맨 마지막에 count로 넣어준다.
-            isSuccess &= BitConverter.TryWriteBytes(span.Slice(count, span.Length - count), this.packetID);
+            isSuccess &= BitConverter.TryWriteBytes(span.Slice(count, span.Length - count), (ushort)PacketID.PlayerInfoReq);
             // playerID를 byte로 변환하여 저장
             count += sizeof(ushort);
             isSuccess &= BitConverter.TryWriteBytes(span.Slice(count, span.Length - count), this.playerID);
