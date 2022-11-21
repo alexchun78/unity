@@ -6,6 +6,28 @@ namespace PacketGenerator
 {
     class PacketFormat
     {
+        // {0} 패킷 이름/번호 목록
+        // {1} 패킷 목록
+        public static string fileFormat =
+@"using ServerCore;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Text;
+
+public enum PacketID
+{{
+    {0}
+}}
+
+{1}
+";
+        // {0} 패킷 이름
+        // {1} 패킷 번호
+        public static string packetEnumFormat =
+@"{0} = {1},
+";
+
         // {0} 패킷 이름
         // {1} 멤버 변수들
         // {2} 멤버 변수 Read
@@ -61,7 +83,7 @@ public {0} {1};
         // {4} 멤버 변수 Write
         public static string memberListFormat =
 @"
-public struct {0}
+public class {0}
 {{
     {2}
 
@@ -87,6 +109,14 @@ public List<{0}> {1}s = new List<{0}>();
 @"
 this.{0} = BitConverter.{1}(span.Slice(count, span.Length - count));
 count += sizeof({2});
+";
+
+        // {0} 변수 이름
+        // {1} 변수 형식
+        public static string readByteFormat =
+@"
+this.{0} = ({1}) segment.Array[segment.Offset + count];
+count += sizeof({1});
 ";
 
         // {0} 변수 이름
@@ -118,6 +148,15 @@ for(ushort i = 0; i < {1}Len; ++i)
         public static string writeFormat =
 @"
 isSuccess &= BitConverter.TryWriteBytes(span.Slice(count, span.Length - count), this.{0});
+count += sizeof({1});
+";
+
+
+        // {0} 변수 이름
+        // {1} 변수 형식
+        public static string writeByteFormat =
+@"
+segment.Array[segment.Offset + count] = ({1}) this.{0};
 count += sizeof({1});
 ";
 
