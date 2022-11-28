@@ -12,11 +12,12 @@ namespace Server
 
     public partial class Program
     {
-
         static Listener _listener = new Listener();
 
         static void Main(string[] args)
         {
+            PacketManager.Instance.Register();
+
             // DNS(Domain Name System)
             string host = Dns.GetHostName();
 

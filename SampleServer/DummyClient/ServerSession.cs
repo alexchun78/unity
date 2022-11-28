@@ -26,9 +26,9 @@ namespace DummyClient
         {
             Console.WriteLine($"OnConnected : {endPoint}");
 
-            PlayerInfoReq packet = new PlayerInfoReq() { playerID = 1001, name = "ABCD" };
-			var skill = new PlayerInfoReq.Skill() { id = 101, level = 1, duration = 3.0f };
-			skill.attributes.Add(new PlayerInfoReq.Skill.Attribute() { att = 77 });
+            C_PlayerInfoReq packet = new C_PlayerInfoReq() { playerID = 1001, name = "ABCD" };
+			var skill = new C_PlayerInfoReq.Skill() { id = 101, level = 1, duration = 3.0f };
+			skill.attributes.Add(new C_PlayerInfoReq.Skill.Attribute() { att = 77 });
             packet.skills.Add(skill);
 
             //packet.skills.Add(new PlayerInfoReq.Skill() { 
@@ -36,13 +36,13 @@ namespace DummyClient
             //    level = 1,
             //    duration = 100
             //});
-            packet.skills.Add(new PlayerInfoReq.Skill()
+            packet.skills.Add(new C_PlayerInfoReq.Skill()
             {
                 id = 2008,
                 level = 14,
                 duration = 200
             });
-            packet.skills.Add(new PlayerInfoReq.Skill()
+            packet.skills.Add(new C_PlayerInfoReq.Skill()
             {
                 id = 2010,
                 level = 16,

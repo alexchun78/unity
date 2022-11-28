@@ -10,6 +10,9 @@ namespace PacketGenerator
         static ushort _packetID = 0;
         static string _packetEnums;
 
+        static string _clientRegister;
+        static string _serverRegister;
+
         static void Main(string[] args)
         {
             string pdlPath = "../PDL.xml";
@@ -20,7 +23,7 @@ namespace PacketGenerator
                 IgnoreWhitespace = true,
             };
 
-            if(args.Length >1)
+            if(args.Length >=1)
             {
                 pdlPath = args[0];
             }
@@ -37,7 +40,11 @@ namespace PacketGenerator
                 }
 
                 string fileText = string.Format(PacketFormat.fileFormat, _packetEnums, _genPacket);
-                File.WriteAllText("GamePacket.cs", fileText);
+                File.WriteAllText("GenPackets.cs", fileText);
+                string clientManagerText = string.Format(PacketFormat.managerFormat, _clientRegister);
+                File.WriteAllText("ClientPacketManager.cs", clientManagerText);
+                string serverManagerText = string.Format(PacketFormat.managerFormat, _serverRegister);
+                File.WriteAllText("ServerPacketManager.cs", serverManagerText);
             }
         }
 
@@ -62,6 +69,10 @@ namespace PacketGenerator
             Tuple<string, string, string> tempResult = ParseMembers(reader);
             _genPacket += string.Format(PacketFormat.packetFormat, packetName, tempResult.Item1, tempResult.Item2, tempResult.Item3);
             _packetEnums += string.Format(PacketFormat.packetEnumFormat, packetName, ++_packetID)+"\t";
+            if(packetName.StartsWith("S_") || packetName.StartsWith("s_"))
+                _clientRegister += string.Format(PacketFormat.managerRegisterFormat, packetName) + Environment.NewLine;
+            else
+                _serverRegister += string.Format(PacketFormat.managerRegisterFormat, packetName) + Environment.NewLine;
         }
 
         // {1} 멤버 변수들
@@ -81,23 +92,19 @@ namespace PacketGenerator
                 if (reader.Depth != depth)
                     break;
 
-                //string ttt = reader.Name;
-
                 string memberName = reader["name"];
                 if (string.IsNullOrEmpty(memberName))
                 {
                     Console.WriteLine("Member without name");
                     return null;
-                    //continue;
-                  //  return null;
                 }
 
-                if (string.IsNullOrEmpty(memberCode) == false)
-                    memberCode += Environment.NewLine;
-                if (string.IsNullOrEmpty(readCode) == false)
-                    readCode += Environment.NewLine;
-                if (string.IsNullOrEmpty(writeCode) == false)
-                    writeCode += Environment.NewLine;
+                //if (string.IsNullOrEmpty(memberCode) == false)
+                //    memberCode += Environment.NewLine;
+                //if (string.IsNullOrEmpty(readCode) == false)
+                //    readCode += Environment.NewLine;
+                //if (string.IsNullOrEmpty(writeCode) == false)
+                //    writeCode += Environment.NewLine;
 
                 string memberType = reader.Name.ToLower();
                 switch(memberType)
