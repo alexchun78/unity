@@ -7,7 +7,6 @@ using System.Threading;
 
 namespace ServerCore
 {
-
     public abstract class PacketSession : Session
     {
         public static readonly int HeaderSize = 2;
@@ -67,9 +66,18 @@ namespace ServerCore
             _socket = socket;
 
             _recvArgc.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
-            RegisterRecv(); // 최초로 낚싯대를 휙 던진 거 (비유를 굳이 한다면)
-
             _sendArgc.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
+			
+            RegisterRecv(); // 최초로 낚싯대를 휙 던진 거 (비유를 굳이 한다면)
+        }
+
+        void Clear()
+        {
+            lock(_lock)
+            {
+                _sendQueue.Clear();
+                _pendingList.Clear();
+            }
         }
 
         public void Send(ArraySegment<byte> sendBuff)
@@ -99,6 +107,7 @@ namespace ServerCore
             OnDisconnected(_socket.RemoteEndPoint);
             _socket.Shutdown(SocketShutdown.Both); // 서버 끊기 전에 미리 양쪽에 공지한다. 
             _socket.Close();
+            Clear();
         }
 
 #region 네트워크 통신
@@ -106,6 +115,8 @@ namespace ServerCore
         {
 #if true // 한번에 리스트 단위로 넣는 작업
             //_pendingList.Clear();
+            if (_disconnected == 1)
+                return;
 
             while(_sendQueue.Count > 0)
             {
@@ -119,10 +130,17 @@ namespace ServerCore
             byte[] buffer_temp = _sendQueue.Dequeue();
             _sendArgc.SetBuffer(buffer_temp, 0, buffer_temp.Length);
 #endif
-            bool isPending = _socket.SendAsync(_sendArgc);
-            if (isPending == false)
+            try
             {
-                OnSendCompleted(null, _sendArgc);
+                bool isPending = _socket.SendAsync(_sendArgc);
+                if (isPending == false)
+                {
+                    OnSendCompleted(null, _sendArgc);
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine($"RegisterSend() Failed {e}");
             }
         }
 
@@ -157,14 +175,24 @@ namespace ServerCore
 
         void RegisterRecv()
         {
+            if (_disconnected == 1)
+                return;
+
             _recvBuffer.Clean();
             ArraySegment<byte> segment = _recvBuffer.WriteSegment;
             _recvArgc.SetBuffer(segment.Array, segment.Offset, segment.Count);
 
-            bool isPending = _socket.ReceiveAsync(_recvArgc);
-            if(isPending == false)
+            try
             {
-                OnRecvCompleted(null, _recvArgc);
+                bool isPending = _socket.ReceiveAsync(_recvArgc);
+                if (isPending == false)
+                {
+                    OnRecvCompleted(null, _recvArgc);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"RegisterRecv() Failed {e}");
             }
         }
 

@@ -11,11 +11,12 @@ namespace Server
 {
 	class ClientSession : PacketSession
     {
+        public int SessionID { get; set; }
+        public GameRoom Room { get; set; }
+
         public override void OnConnected(EndPoint endPoint)
         {
             Console.WriteLine($"OnConnected : {endPoint}");
-
-          //  PlayerInfoReq packet = new PlayerInfoReq() { packetID = 10 };
 #if false
             // [100] [10]
             //byte[] sendBuffer = new byte[4096];
@@ -34,8 +35,8 @@ namespace Server
             ////byte[] sendBuffer = Encoding.UTF8.GetBytes("Welcome to MMORPG Server!");
             //Send(sendBuffer);
 #endif
-            Thread.Sleep(5000);
-            DisConnect();
+            // TODO : chat service
+            Program.Room.Push(() => Program.Room.Enter(this));
         }
 
         // [][][][][][][][][][][][]
@@ -46,6 +47,16 @@ namespace Server
 
         public override void OnDisconnected(EndPoint endPoint)
         {
+            SessionManager.Instance.Remove(this);
+
+            if(Room != null)
+            {
+                // 실행 시점이 나중이므로, 변수에 참조로 임시 저장한 후 실행시킨다.
+                GameRoom room = Room;
+                room.Push(() => room.Leave(this));
+                Room = null;
+            }
+
             Console.WriteLine($"OnDisconnected : {endPoint}");
         }
 

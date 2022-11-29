@@ -10,14 +10,13 @@ namespace Server
 {
 
 
-    public partial class Program
+    class Program
     {
-        static Listener _listener = new Listener();
+        public static Listener _listener = new Listener();
+        public static GameRoom Room = new GameRoom();
 
         static void Main(string[] args)
         {
-            PacketManager.Instance.Register();
-
             // DNS(Domain Name System)
             string host = Dns.GetHostName();
 
@@ -26,7 +25,7 @@ namespace Server
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777); // 식당 문            
 
             // 문지기
-            _listener.Init(endPoint, () => { return new ClientSession(); });
+            _listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
             Console.WriteLine("Listening....");
 
             while (true)

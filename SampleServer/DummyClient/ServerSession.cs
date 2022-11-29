@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DummyClient
 {
-	class ServerSession : Session
+	class ServerSession : PacketSession
     {
         // c#에서 c++의 포인터 형태를 빌려와서 메모리를 접근할 때의 방식
 #if false
@@ -24,37 +24,7 @@ namespace DummyClient
 
         public override void OnConnected(EndPoint endPoint)
         {
-            Console.WriteLine($"OnConnected : {endPoint}");
-
-            C_PlayerInfoReq packet = new C_PlayerInfoReq() { playerID = 1001, name = "ABCD" };
-			var skill = new C_PlayerInfoReq.Skill() { id = 101, level = 1, duration = 3.0f };
-			skill.attributes.Add(new C_PlayerInfoReq.Skill.Attribute() { att = 77 });
-            packet.skills.Add(skill);
-
-            //packet.skills.Add(new PlayerInfoReq.Skill() { 
-            //    id=2003,
-            //    level = 1,
-            //    duration = 100
-            //});
-            packet.skills.Add(new C_PlayerInfoReq.Skill()
-            {
-                id = 2008,
-                level = 14,
-                duration = 200
-            });
-            packet.skills.Add(new C_PlayerInfoReq.Skill()
-            {
-                id = 2010,
-                level = 16,
-                duration = 110
-            });
-
-
-            {
-                ArraySegment<byte> sendBuffer = packet.Write();
-                if (sendBuffer != null)
-                    Send(sendBuffer);
-            }
+            Console.WriteLine($"OnConnected : {endPoint}"); 
 #if false
             //  메시지 보낸다.
             //for (int i = 0; i < 5; ++i)
@@ -100,16 +70,14 @@ namespace DummyClient
 
         // 이동 패킷 =>  (3,2) 좌표로 이동하고 싶다.
         // 15  3 2
-        public override int OnRecv(ArraySegment<byte> buffer)
+        public override void OnRecvPacket(ArraySegment<byte> buffer)
         {
-            string receiveData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
-            Console.WriteLine($"[From Server] {receiveData}");
-            return buffer.Count;
+            PacketManager.Instance.OnRecvPacket(this, buffer);
         }
 
         public override void OnSend(int numOfBytes)
         {
-            Console.WriteLine($"Transferred bytes : {numOfBytes}");
+            //Console.WriteLine($"Transferred bytes : {numOfBytes}");
         }
     }
 }
