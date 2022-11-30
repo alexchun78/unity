@@ -19,7 +19,9 @@ namespace DummyClient
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777); // 식당 문
 
             Connector connector = new Connector(); 
-            connector.Connect(endPoint, () => { return SessionManager.Instance.Generate(); }, 100);
+            connector.Connect(endPoint, 
+                () => { return SessionManager.Instance.Generate(); }, 
+                500);
 
             while (true)
             {
