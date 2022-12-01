@@ -1,0 +1,14 @@
+Client프로젝트
+copy /Y "$(SolutionDir)\Common\Packet\GenPackets.cs" "$(ProjectDir)\Packet\GenPackets.cs"
+copy /Y "$(SolutionDir)\Common\Packet\ClientPacketManager.cs" "$(ProjectDir)\Packet\ClientPacketManager.cs"
+
+Server 프로젝트
+copy /Y "$(SolutionDir)\Common\Packet\GenPackets.cs" "$(ProjectDir)\Packet\GenPackets.cs"
+copy /Y "$(SolutionDir)\Common\Packet\ServerPacketManager.cs" "$(ProjectDir)\Packet\ServerPacketManager.cs"
+
+
+/bin/PacketGenerator.exe ../../PacketGenerator/PDL.xml
+copy /Y "/GenPackets.cs" "../../DummyClient/Packet/GenPackets.cs"
+copy /Y "/GenPackets.cs" "../../Server/Packet/GenPackets.cs"
+copy /Y "/ClientPacketManager.cs" "$../../DummyClient/Packet/ClientPacketManager.cs"
+copy /Y "/ServerPacketManager.cs" "$../../Server/Packet/ServerPacketManager.cs"

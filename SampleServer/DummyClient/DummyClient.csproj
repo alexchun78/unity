@@ -17,8 +17,4 @@
     <ProjectReference Include="..\ServerCore\ServerCore.csproj" />
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="copy /Y &quot;$(SolutionDir)\Common\Packet\GenPackets.cs&quot; &quot;$(ProjectDir)\Packet\GenPackets.cs&quot;&#xD;&#xA;copy /Y &quot;$(SolutionDir)\Common\Packet\ClientPacketManager.cs&quot; &quot;$(ProjectDir)\Packet\ClientPacketManager.cs&quot;" />
-  </Target>
-
 </Project>
