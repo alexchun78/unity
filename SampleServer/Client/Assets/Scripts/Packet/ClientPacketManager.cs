@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ServerCore;
 
-class PacketManager
+public class PacketManager
 {
     #region Singleton
     static PacketManager _instance = new PacketManager();
@@ -19,12 +19,21 @@ class PacketManager
 
     public void Register()
     {
-        _makeFunc.Add((ushort)PacketID.S_Chat, MakePacket<S_Chat>);
-        _handler.Add((ushort)PacketID.S_Chat, PacketHandler.S_ChatHandler);
+        _makeFunc.Add((ushort)PacketID.S_BroadcastEnterGame, MakePacket<S_BroadcastEnterGame>);
+        _handler.Add((ushort)PacketID.S_BroadcastEnterGame, PacketHandler.S_BroadcastEnterGameHandler);
+
+        _makeFunc.Add((ushort)PacketID.S_BroadcastLeaveGame, MakePacket<S_BroadcastLeaveGame>);
+        _handler.Add((ushort)PacketID.S_BroadcastLeaveGame, PacketHandler.S_BroadcastLeaveGameHandler);
+
+        _makeFunc.Add((ushort)PacketID.S_PlayerList, MakePacket<S_PlayerList>);
+        _handler.Add((ushort)PacketID.S_PlayerList, PacketHandler.S_PlayerListHandler);
+
+        _makeFunc.Add((ushort)PacketID.S_BroadcastMove, MakePacket<S_BroadcastMove>);
+        _handler.Add((ushort)PacketID.S_BroadcastMove, PacketHandler.S_BroadcastMoveHandler);
 
 
     }
-
+ 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer, Action<PacketSession, IPacket> onRecvCallback = null)
     {
         ushort count = 0;
@@ -32,7 +41,7 @@ class PacketManager
         count += sizeof(ushort);
         ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
         count += sizeof(ushort);
-
+ 
         Func<PacketSession, ArraySegment<byte>, IPacket> func = null;
         if(_makeFunc.TryGetValue(id,out func))
         {
