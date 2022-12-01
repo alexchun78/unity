@@ -42,6 +42,8 @@ namespace Server
         public void Enter(ClientSession session)
         {
             _sessions.Add(session);
+            // 같은 방에 있는 유저들에게 알리는 코드가 들어가야 한다. 
+
             session.Room = this;
         }
 
