@@ -25,8 +25,11 @@ public interface IPacket
 
 public class S_BroadcastEnterGame : IPacket
 {
-    public int playerID;public float PosX;public float PosY;public float PosZ;
-
+    public int playerID;
+	public float PosX;
+	public float PosY;
+	public float PosZ;
+	
 	public ushort Protocol { get { return (ushort)PacketID.S_BroadcastEnterGame;  } }
 
     public void Read(ArraySegment<byte> segment)
@@ -71,7 +74,6 @@ public class S_BroadcastEnterGame : IPacket
 public class C_LeaveGame : IPacket
 {
     
-
 	public ushort Protocol { get { return (ushort)PacketID.C_LeaveGame;  } }
 
     public void Read(ArraySegment<byte> segment)
@@ -100,7 +102,7 @@ public class C_LeaveGame : IPacket
 public class S_BroadcastLeaveGame : IPacket
 {
     public int playerID;
-
+	
 	public ushort Protocol { get { return (ushort)PacketID.S_BroadcastLeaveGame;  } }
 
     public void Read(ArraySegment<byte> segment)
@@ -134,7 +136,12 @@ public class S_PlayerList : IPacket
 {
     public class Player
 	{
-	    public bool isSelf;public int playerID;public float PosX;public float PosY;public float PosZ;
+	    public bool isSelf;
+		public int playerID;
+		public float PosX;
+		public float PosY;
+		public float PosZ;
+		
 	
 	    public void Read(ArraySegment<byte> segment, ref ushort count)
 	    {
@@ -170,7 +177,6 @@ public class S_PlayerList : IPacket
 	}
 	public List<Player> players = new List<Player>();
 	
-
 	public ushort Protocol { get { return (ushort)PacketID.S_PlayerList;  } }
 
     public void Read(ArraySegment<byte> segment)
@@ -213,8 +219,10 @@ public class S_PlayerList : IPacket
 }
 public class C_Move : IPacket
 {
-    public float PosX;public float PosY;public float PosZ;
-
+    public float PosX;
+	public float PosY;
+	public float PosZ;
+	
 	public ushort Protocol { get { return (ushort)PacketID.C_Move;  } }
 
     public void Read(ArraySegment<byte> segment)
@@ -254,8 +262,11 @@ public class C_Move : IPacket
 }
 public class S_BroadcastMove : IPacket
 {
-    public int playerID;public float PosX;public float PosY;public float PosZ;
-
+    public int playerID;
+	public float PosX;
+	public float PosY;
+	public float PosZ;
+	
 	public ushort Protocol { get { return (ushort)PacketID.S_BroadcastMove;  } }
 
     public void Read(ArraySegment<byte> segment)

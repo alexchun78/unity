@@ -5,32 +5,32 @@ using System.Text;
 // 여기서는 실제로는 사용 안함
 namespace Server
 {
-    interface ITask
-    {
-        void Excute();
-    }
+    //interface ITask
+    //{
+    //    void Excute();
+    //}
 
-    class BroadcastTask : ITask
-    {
-        GameRoom _room;
-        ClientSession _session;
-        string _chat;
+    //class BroadcastTask : ITask
+    //{
+    //    GameRoom _room;
+    //    ClientSession _session;
+    //    string _chat;
 
-        BroadcastTask(GameRoom room, ClientSession session, string chat)
-        {
-            _room = room;
-            _session = session;
-            _chat = chat;
-        }
+    //    BroadcastTask(GameRoom room, ClientSession session, string chat)
+    //    {
+    //        _room = room;
+    //        _session = session;
+    //        _chat = chat;
+    //    }
 
-        public void Excute()
-        {
-            _room.Broadcast(_session, _chat);
-        }
-    }
-
-    class TaskQueue
-    {
-        Queue<ITask> _queue = new Queue<ITask>();
-    }
+    //    public void Excute()
+    //    {
+    //        _room.Broadcast(_session, _chat);
+    //    }
+    //}
+     
+    //class TaskQueue
+    //{
+    //    Queue<ITask> _queue = new Queue<ITask>();
+    //}
 }
