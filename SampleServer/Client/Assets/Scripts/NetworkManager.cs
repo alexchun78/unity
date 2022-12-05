@@ -22,29 +22,20 @@ public class NetworkManager : MonoBehaviour
         connector.Connect(endPoint,
             () => { return _session; },
             1);
-
-        StartCoroutine("CoSendPacket");
     }
 
     void Update()
     {
-        IPacket packet = PacketQueue.Instance.Pop();
-        if (packet != null)
-            PacketManager.Instance.HandlePacket(_session, packet);
-
+        List<IPacket> pckList = PacketQueue.Instance.PopAll();
+//        IPacket packet = PacketQueue.Instance.Pop();
+        foreach( IPacket packet in pckList)
+        {
+                PacketManager.Instance.HandlePacket(_session, packet);
+        }
     }
 
-    IEnumerator CoSendPacket()
+    public void Send(ArraySegment<byte> sendBuff)
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(3.0f);
-
-            C_Chat chatPacket = new C_Chat();
-            chatPacket.chat = "Hello Unity !";
-            ArraySegment<byte> segment = chatPacket.Write();
-
-            _session.Send(segment);
-        }
+        _session.Send(sendBuff);
     }
 }

@@ -127,7 +127,6 @@ public interface IPacket
 @"public class {0} : IPacket
 {{
     {1}
-
 	public ushort Protocol {{ get {{ return (ushort)PacketID.{0};  }} }}
 
     public void Read(ArraySegment<byte> segment)
@@ -157,7 +156,8 @@ public interface IPacket
         // {0} 변수 형식
         // {1} 변수 이름
         public static string memberFormat = 
-@"public {0} {1};";
+@"public {0} {1};
+";
 
         // {0} 리스트 이름 [대문자]
         // {1} 리스트 이름 [소문자]
