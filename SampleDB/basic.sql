@@ -1,4 +1,11 @@
 
+  /****** [4강] SELECT ******/  
+  /****** [5강] ORDER BY ****/
+  /****** [6강] 수치와 문자열 ****/
+
+
+
+
   /******  Comment  ******/ 
   -- 1 each line comment
   -- SQL (RDBMS를 조작하기 위한 명령어)
@@ -6,7 +13,7 @@
   -- CRUD ( Create - Read - Update - Delete)
 
   /*************************************************/
-  /******  SELECT ******/  
+  /****** [4강] SELECT ******/  
   /******  NULL 비교 구문  ******/ 
   -- SELECT nameFirst,nameLast,birthYear, birthCountry, weight FROM players WHERE weight IS NULL
   -- =, != 사용이 안된다.
@@ -17,8 +24,8 @@
   -- SELECT * FROM players WHERE birthCity LIKE 'New%';
   -- % 임의의 문자열
   -- _ 임의의 문자 1개 
-  /************************************************/
 
+  /****** [5강] ORDER BY ****/
   /*
   SELECT TOP 10 * 
   FROM players 
@@ -38,4 +45,23 @@
   
   -- 100 ~ 200 사이 추출 : OFFSET 100 ROWS FETCH NEXT 100 ROWS ONLY, TOP와는 함께 사용 불가하다.
   */
+  
+  /****** [6강] ORDER BY ******/
+  
+-- 사칙 연산 가능 + - * / %
+-- SELECT는 마치 등호(=)와 같다. 
+
+SELECT 2021 - birthYear As KoreanAge
+From Players
+WHERE deathYear IS NULL AND birthYear IS NOT NULL AND (2021 - birthYear) <= 80
+ORDER BY KoreanAge;
+
+
+-- <[중요] QUERY 진행 순서>
+-- FROM 책상에서
+-- WHERE 빨간 공을 
+-- SELECT 가져오고
+-- ORDER BY 크기 순서대로 정렬해라.
+-- 
+
   /*************************************************/
